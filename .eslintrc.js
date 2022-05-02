@@ -1,8 +1,10 @@
 module.exports = {
+  root: true,
   env: {
     node: true,
     es6: true,
-    browser: true
+    browser: true,
+    commonjs: true
   },
 
   parserOptions: {
@@ -16,26 +18,20 @@ module.exports = {
   },
   rules: {
     'no-console': 'off',
-    'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
+    'no-debugger': 'error',
 
     // Best Practices
     eqeqeq: 'error',
     'no-invalid-this': 'error',
     'no-return-assign': 'error',
-    'no-unused-expressions': ['error', { allowTernary: true }],
-    'no-useless-concat': 'error',
-    'no-useless-return': 'error',
 
-    // Variable
-    // 'init-declarations': 'error',
-    'no-use-before-define': 'error',
-    'no-unused-vars': ['error', { varsIgnorePattern: '^[A-Z]' }],
+
 
     // Stylistic Issues
     'array-bracket-newline': ['error', { multiline: true, minItems: null }],
     'array-bracket-spacing': 'error',
     'brace-style': ['error', '1tbs', { allowSingleLine: true }],
-    'block-spacing': 'error',
+    'block-spacing': 'off',
     'comma-dangle': 'error',
     'comma-spacing': 'error',
     'comma-style': 'error',
@@ -47,7 +43,7 @@ module.exports = {
     'multiline-ternary': ['error', 'never'],
     // 'no-lonely-if': 'error',
     'no-mixed-operators': 'error',
-    'no-multiple-empty-lines': ['error', { max: 2, maxEOF: 1 }],
+    'no-multiple-empty-lines': ['off', { max: 2, maxEOF: 1 }],
     'no-tabs': 'error',
     'no-unneeded-ternary': 'error',
     'no-whitespace-before-property': 'error',
@@ -58,29 +54,7 @@ module.exports = {
     ],
     'quote-props': ['error', 'as-needed'],
     // quotes: ['error', 'prefer-single'],
-    semi: ['error', 'never'],
-    'semi-spacing': 'error',
-    'space-before-blocks': 'error',
-    // 'space-before-function-paren': 'error',
-    'space-in-parens': 'error',
-    'space-infix-ops': 'error',
-    'space-unary-ops': 'error',
 
-    // ES6
-    'arrow-spacing': 'error',
-    'no-confusing-arrow': 'error',
-    'no-duplicate-imports': 'error',
-    'no-var': 'error',
-    'object-shorthand': 'error',
-    'prefer-const': 'error',
-    'prefer-template': 'error'
   }
-
-  // rules: {
-  //   'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'off',
-  //   'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
-  //   semi: ['error', 'never'],
-  //   'max-len': 'off',
-  //   camelcase: ['error', { properties: 'never', ignoreDestructuring: true, ignoreImports: true }]
-  // }
+ 
 }

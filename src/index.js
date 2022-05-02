@@ -42,7 +42,7 @@ ReactDOM.render(
   <Provider store={store}>
     <Suspense fallback={<Spinner />}>
       <ThemeContext>
-        <LazyApp />
+        <LazyApp  />
         <ToastContainer newestOnTop />
       </ThemeContext>
     </Suspense>

@@ -10,7 +10,7 @@ module.exports = {
         }
       }
     },
-    postcss: {
+    postcssOptions: {
       plugins: [require('postcss-rtl')()]
     }
   },

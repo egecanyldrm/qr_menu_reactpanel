@@ -3,7 +3,7 @@
 //Template config options
 const themeConfig = {
   app: {
-    appName: 'Deneme',
+    appName: 'Dijital Menü',
     appLogoImage: require('@src/assets/images/logo/logo.svg').default
   },
   layout: {

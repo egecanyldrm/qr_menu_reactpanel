@@ -13,8 +13,20 @@ const Routes = [
     component: lazy(() => import('../../views/Home'))
   },
   {
-    path: '/second-page',
-    component: lazy(() => import('../../views/SecondPage'))
+    path: '/products',
+    component: lazy(() => import('../../views/Products/index'))
+  },
+  {
+    path: '/categories',
+    component: lazy(() => import('../../views/Categories/index'))
+  },
+  {
+    path: '/add-category',
+    component: lazy(() => import('../../views/Categories/addCategory'))
+  },
+  {
+    path: '/add-product',
+    component: lazy(() => import('../../views/Products/addProduct'))
   },
   {
     path: '/login',

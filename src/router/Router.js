@@ -18,11 +18,16 @@ import { DefaultRoute, Routes } from './routes'
 import BlankLayout from '@layouts/BlankLayout'
 import VerticalLayout from '@src/layouts/VerticalLayout'
 import HorizontalLayout from '@src/layouts/HorizontalLayout'
+import { useSelector } from 'react-redux'
 
 const Router = () => {
   // ** Hooks
   const { layout, setLayout, setLastLayout } = useLayout()
   const { transition, setTransition } = useRouterTransition()
+
+  const auth = useSelector(state => state.auth);
+
+
 
   // ** Default Layout
   const DefaultLayout = layout === 'horizontal' ? 'HorizontalLayout' : 'VerticalLayout'
@@ -114,6 +119,7 @@ const Router = () => {
 
       return (
         <Route path={LayoutPaths} key={index}>
+          {!auth.isLogin ? <Redirect to="/login" /> : <Redirect to="/home" />}
           <LayoutTag
             layout={layout}
             setLayout={setLayout}
@@ -123,64 +129,64 @@ const Router = () => {
             setTransition={setTransition}
             currentActiveItem={currentActiveItem}
           >
-            <Switch>
-              {LayoutRoutes.map(route => {
-                return (
-                  <Route
-                    key={route.path}
-                    path={route.path}
-                    exact={route.exact === true}
-                    render={props => {
-                      // ** Assign props to routerProps
-                      Object.assign(routerProps, {
-                        ...props,
-                        meta: route.meta
-                      })
+              <Switch>
+                {LayoutRoutes.map(route => {
+                  return (
+                    <Route
+                      key={route.path}
+                      path={route.path}
+                      exact={route.exact === true}
+                      render={props => {
+                        // ** Assign props to routerProps
+                        Object.assign(routerProps, {
+                          ...props,
+                          meta: route.meta
+                        })
 
-                      return (
-                        <Fragment>
-                          {/* Layout Wrapper to add classes based on route's layout, appLayout and className */}
+                        return (
+                          <Fragment>
+                            {/* Layout Wrapper to add classes based on route's layout, appLayout and className */}
 
-                          {route.layout === 'BlankLayout' ? (
-                            <Fragment>
-                              <route.component {...props} />
-                            </Fragment>
-                          ) : (
-                            <LayoutWrapper
-                              layout={DefaultLayout}
-                              transition={transition}
-                              setTransition={setTransition}
-                              /* Conditional props */
-                              /*eslint-disable */
-                              {...(route.appLayout
-                                ? {
+                            {route.layout === 'BlankLayout' ? (
+                              <Fragment>
+                                <route.component {...props} />
+                              </Fragment>
+                            ) : (
+                              <LayoutWrapper
+                                layout={DefaultLayout}
+                                transition={transition}
+                                setTransition={setTransition}
+                                /* Conditional props */
+                                /*eslint-disable */
+                                {...(route.appLayout
+                                  ? {
                                     appLayout: route.appLayout
                                   }
-                                : {})}
-                              {...(route.meta
-                                ? {
+                                  : {})}
+                                {...(route.meta
+                                  ? {
                                     routeMeta: route.meta
                                   }
-                                : {})}
-                              {...(route.className
-                                ? {
+                                  : {})}
+                                {...(route.className
+                                  ? {
                                     wrapperClass: route.className
                                   }
-                                : {})}
+                                  : {})}
                               /*eslint-enable */
-                            >
-                              <Suspense fallback={null}>
-                                <route.component {...props} />
-                              </Suspense>
-                            </LayoutWrapper>
-                          )}
-                        </Fragment>
-                      )
-                    }}
-                  />
-                )
-              })}
-            </Switch>
+                              >
+                                <Suspense fallback={null}>
+                                  <route.component {...props} />
+                                </Suspense>
+                              </LayoutWrapper>
+                            )}
+                          </Fragment>
+                        )
+                      }}
+                    />
+                  )
+                })}
+              </Switch>
           </LayoutTag>
         </Route>
       )
@@ -188,7 +194,7 @@ const Router = () => {
   }
 
   return (
-    <AppRouter basename={process.env.REACT_APP_BASENAME}>
+    <AppRouter >
       <Switch>
         {/* If user is logged in Redirect user to DefaultRoute else to login */}
         <Route
