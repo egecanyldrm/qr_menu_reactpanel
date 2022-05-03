@@ -16,7 +16,7 @@ const App = () => {
     useEffect(() => {
 
 
-        const token = localStorage.getItem('token')
+        let token = localStorage.getItem('token')
         if (token) {
             dispatch(checkLogin(token))
         }
@@ -27,13 +27,13 @@ const App = () => {
 
     useEffect(() => {
         if (state.isLogin === false) {
-            axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
-
             handleBasicTitleAlert(state.message, state.status, state.title)
         }
+        axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
+
     })
 
- 
+
 
     return <Router />
 

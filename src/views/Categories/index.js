@@ -1,29 +1,27 @@
 // ** React Imports
 import { Fragment, useEffect } from 'react'
-
+import Swal from 'sweetalert2'
+import withReactContent from 'sweetalert2-react-content'
 // ** Reactstrap Imports
 import { Card } from 'reactstrap'
-
+import { deleteSwal } from '../../extension/basicalert';
 // ** Table Import
 import Table from './Table'
 import { useState } from 'react'
 import { Spinner } from 'reactstrap'
 import axios from 'axios'
 import { useDispatch } from 'react-redux'
-import { logOut, unAuthorized } from '../../redux/authentication'
+import { unAuthorized } from '../../redux/authentication'
+
 const Permissions = () => {
 
   const [categories, setCategories] = useState([]);
-  const [status, setStatus] = useState();
   const dispatch = useDispatch();
-
-
 
   useEffect(async () => {
 
     try {
       const categories = await axios.get('/admin/categories').catch(err => { throw err.response.status });
-      setStatus(true)
       setCategories(categories.data);
 
     } catch (err) {
@@ -35,13 +33,33 @@ const Permissions = () => {
     }
   }, [])
 
+  const removeCategory = (id) => {
+
+    deleteSwal({title : 'Kategori'})
+      .then((result) => {
+        if (result.isConfirmed) {
+
+          axios.post('/admin/delete-category', { categoryId: id })
+            .then(() => {
+              const newCategories = categories.filter(category => category._id !== id);
+              setCategories(newCategories)
+              Swal.fire(
+                'Silindi!',
+                'Kategori Başarıyla Silindi.',
+                'success'
+              )
+            }).catch(err => console.log(err))
+        }
+      })
+  }
+
   return (
     <Fragment>
 
       <Card>
         <div className='card-datatable app-user-list table-responsive'>
 
-          <Table data={categories} />
+          <Table removeCategory={removeCategory} data={categories} />
 
         </div>
       </Card>

@@ -29,7 +29,7 @@ const ErrorToast = () => (
     </Fragment>
 )
 
-const FileUploaderRestrictions = () => {
+const FileUploaderRestrictions = (props) => {
     // ** State
     const [files, setFiles] = useState([])
 
@@ -41,6 +41,7 @@ const FileUploaderRestrictions = () => {
                 toast.error(<ErrorToast />, { icon: false, hideProgressBar: true })
             } else {
                 setFiles([...files, ...acceptedFiles.map(file => Object.assign(file))])
+                props.handleCompressedUpload(acceptedFiles[0])
             }
         }
     })
@@ -70,7 +71,12 @@ const FileUploaderRestrictions = () => {
                     <p className='file-size mb-0'>{renderFileSize(file.size)}</p>
                 </div>
             </div>
-            <Button color='danger' outline size='sm' className='btn-icon' onClick={() => handleRemoveFile(file)}>
+            <Button color='danger' outline size='sm' className='btn-icon' onClick={() => {
+                handleRemoveFile(file);
+                props.clearImage(null);
+            }
+            }>
+
                 <X size={14} />
             </Button>
         </ListGroupItem>
@@ -78,7 +84,9 @@ const FileUploaderRestrictions = () => {
 
     const handleRemoveAllFiles = () => {
         setFiles([])
+        props.clearImage(null)
     }
+
 
     return (
         <Card >

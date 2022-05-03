@@ -52,7 +52,7 @@ module.exports = {
       'error',
       { allowAllPropertiesOnSameLine: true }
     ],
-    'quote-props': ['error', 'as-needed'],
+    'quote-props': 'off',
     // quotes: ['error', 'prefer-single'],
 
   }
