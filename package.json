@@ -69,7 +69,7 @@
     "react-rating": "^2.0.5",
     "react-redux": "^7.2.0",
     "react-router-dom": "^5.2.0",
-    "react-select": "^5.2.0",
+    "react-select": "^5.3.1",
     "react-shepherd": "^3.3.6",
     "react-slidedown": "^2.4.5",
     "react-sortablejs": "^6.0.0",

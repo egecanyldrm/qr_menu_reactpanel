@@ -2,8 +2,7 @@
 import { Fragment, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify'
-import Avatar from '@components/avatar'
-import { X, DownloadCloud } from 'react-feather'
+import Select from 'react-select'
 import qs from 'qs';
 import { unAuthorized } from '../../redux/authentication';
 // ** Reactstrap Imports
@@ -13,18 +12,26 @@ import Compressor from 'compressorjs';
 import axios from 'axios';
 import { handleSuccess } from '../../extension/basicalert'
 import { ErrorToast } from '../../extension/toast';
-import { useHistory } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
+
+
 
 const PillFilled = () => {
   // ** States
   const [active, setActive] = useState('1');
   const dispatch = useDispatch();
   const navigate = useHistory()
-
+  const params = useParams()
+  const [responseStatus, setResponseStatus] = useState();
   //Name States
   const [trname, setTrName] = useState('');
   const [enname, setEnName] = useState('');
   const [runame, setRuName] = useState('');
+  // Root Category States 
+  const [rootcategory, setRootCategory] = useState();
+  const [defaultCategory, setDefaultCategory] = useState();
+
+  const [categories, setCategories] = useState([]);
   //Description States
   const [trdescription, setTrDescription] = useState('');
   const [endescription, setEnDescription] = useState('');
@@ -50,6 +57,41 @@ const PillFilled = () => {
       }
     });
   };
+
+
+  useEffect(async () => {
+    try {
+      setResponseStatus(false);
+      const { data } = await axios.post('/admin/get-category', { categoryId: params.categoryid }).catch(err => { throw err.response.status });
+      setTrName(data.category.tr.name);
+      setTrDescription(data.category.tr.description);
+      const selectCategories = data.categories.map(category => { return { label: category.tr.name, value: category._id } })
+      setCategories(selectCategories)
+      if (data.rootcategory) {
+        let category = data.rootcategory;
+        const defaultRootCategory = { label: category.tr.name, value: category._id }
+        setDefaultCategory(defaultRootCategory)
+        setRootCategory(defaultRootCategory.value)
+      }
+      if (data.category.en) {
+        setEnName(data.category.en.name);
+        setEnDescription(data.category.en.description);
+      }
+      if (data.category.ru) {
+        setRuName(data.category.ru.name);
+        setRuDescription(data.category.ru.description);
+      }
+      setResponseStatus(true);
+
+    } catch (error) {
+      if (error === 404) {
+        setStatus(false)
+      } else if (error === 401) {
+        dispatch(unAuthorized())
+      }
+    }
+  }, [])
+
   useEffect(() => {
     if (compressedFile) {
       setImageStatus(true)
@@ -70,24 +112,29 @@ const PillFilled = () => {
     setCompressedFile(null)
   }
 
-
-
-
-
   const submitForm = async () => {
-    if ((imageStatus && compressedFile) && (trname && trdescription)) {
+    if ((imageStatus) || (trname && trdescription)) {
+
 
       const formData = new FormData();
-      const json = {
-        tr: { name: trname, description: trdescription }
+      const json =
+      {
+        tr: { name: trname, description: trdescription },
+        en: { name: enname, description: endescription },
+        ru: { name: runame, description: rudescription },
+        rootcategory: rootcategory
       }
+
       // The third parameter is required for server
-      formData.append('image', compressedFile, compressedFile.name);
+      if (compressedFile) {
+
+        formData.append('image', compressedFile, compressedFile.name);
+      }
       formData.set('category', qs.stringify(json));
 
       try {
         // Send the compressed image file to server with XMLHttpRequest.
-        axios.post('/admin/add-category', formData).catch(err => { throw err.response.status })
+        await axios.post(`/admin/edit-category/${params.categoryid}`, formData).catch(err => { throw err.response.status })
         handleSuccess({ title: 'Kayıt Başarılı', timer: 1200, message: 'Kategori başarılı bir şekilde kayıt edildi.' });
         setTimeout(() => {
           clearStates();
@@ -102,128 +149,155 @@ const PillFilled = () => {
         }
       }
 
-    } else if (!compressedFile) {
-      toast.error(<ErrorToast message={'Lütfen Resim Yükleyiniz'} />, { icon: false, hideProgressBar: true })
     } else {
       toast.error(<ErrorToast message={'Lütfen Zorunlu Alanları Doldurun : TR '} />, { icon: false, hideProgressBar: true })
     }
   }
+  {
+    console.log(defaultCategory)
+    return (
 
-  return (
-    <Fragment>
-      <Card>
-        <CardBody>
-          <Nav pills fill>
-            <NavItem>
-              <NavLink
-                active={active === '1'}
-                onClick={() => {
-                  toggle('1')
-                }}
-              >
-                TR
-              </NavLink>
+      < Fragment >
+        {responseStatus ?
+          <Card>
+            <CardBody>
+              <Nav pills fill>
+                <NavItem>
+                  <NavLink
+                    active={active === '1'}
+                    onClick={() => {
+                      toggle('1')
+                    }}
+                  >
+                    TR
+                  </NavLink>
 
-            </NavItem>
-            {state.language === true &&
-              <NavItem>
-                <NavLink
-                  active={active === '2'}
-                  onClick={() => {
-                    toggle('2')
-                  }}
-                >
-                  EN
-                </NavLink>
-              </NavItem>
-            }
-            {state.language === true &&
+                </NavItem>
+                {state.language === true &&
+                  <NavItem>
+                    <NavLink
+                      active={active === '2'}
+                      onClick={() => {
+                        toggle('2')
+                      }}
+                    >
+                      EN
+                    </NavLink>
+                  </NavItem>
+                }
+                {state.language === true &&
 
-              <NavItem>
-                <NavLink
-                  active={active === '3'}
-                  onClick={() => {
-                    toggle('3')
-                  }}
-                >
-                  RU
-                </NavLink>
-              </NavItem>
-            }
-          </Nav>
-          <TabContent className='py-50' activeTab={active}>
-            <TabPane tabId='1'>
-              <Form>
-                <Row>
-                  <Col sm='12' className='mb-1'>
-                    <Label className='form-label' for='nameVertical'>
-                      Kategori Adı
-                    </Label>
-                    <Input value={trname} onChange={e => setTrName(e.target.value)} type='text' name='name' id='nameVertical' placeholder='Kategori Adı' />
-                  </Col>
-                  <Col sm='12' className='mb-1'>
-                    <Label className='form-label' for='descriptionVertical'>
-                      Açıklama
-                    </Label>
-                    <Input value={trdescription} onChange={e => setTrDescription(e.target.value)} type='textarea' name='description' id='descriptionVertical' placeholder='Açıklama' />
-                  </Col>
-                </Row>
-              </Form>
-              <FileUploaderRestrictions clearImage={setCompressedFile} handleCompressedUpload={handleCompressedUpload} />
+                  <NavItem>
+                    <NavLink
+                      active={active === '3'}
+                      onClick={() => {
+                        toggle('3')
+                      }}
+                    >
+                      RU
+                    </NavLink>
+                  </NavItem>
+                }
+              </Nav>
+              <TabContent className='py-50' activeTab={active}>
+                <TabPane tabId='1'>
+                  <Form>
+                    <Row>
+                      <Col sm='12' className='mb-1'>
+                        <Label className='form-label' for='nameVertical'>
+                          Kategori Adı
+                        </Label>
+                        <Input value={trname} onChange={e => setTrName(e.target.value)} type='text' name='name' id='nameVertical' placeholder='Kategori Adı' />
+                      </Col>
+                      <Col sm='12' className='mb-1'>
+                        <Label className='form-label' for='descriptionVertical'>
+                          Açıklama
+                        </Label>
+                        <Input value={trdescription} onChange={e => setTrDescription(e.target.value)} type='textarea' name='description' id='descriptionVertical' placeholder='Açıklama' />
+                      </Col>
+                      <Col sm='12' className='mb-1'>
+                        <Label className='form-label'>Kategori</Label>
+                        <Select
+                          noOptionsMessage={({ inputValue: string }) => 'Kategori Bulunamadı...'}
+                          className='react-select'
+                          classNamePrefix='select'
+                          defaultValue={defaultCategory}
 
-            </TabPane>
-            <TabPane tabId='2'>
-              <Form>
-                <Row>
-                  <Col sm='12' className='mb-1'>
-                    <Label className='form-label' for='nameVertical'>
-                      Kategori Adı
-                    </Label>
-                    <Input value={enname} onChange={e => setEnName(e.target.value)} type='text' name='name' id='nameVertical' placeholder='Kategori Adı' />
-                  </Col>
-                  <Col sm='12' className='mb-1'>
-                    <Label className='form-label' for='descriptionVertical'>
-                      Açıklama
-                    </Label>
-                    <Input value={endescription} onChange={e => setEnDescription(e.target.value)} type='textarea' name='description' id='descriptionVertical' placeholder='Açıklama' />
-                  </Col>
-                </Row>
-              </Form>
-            </TabPane>
-            <TabPane tabId='3'>
-              <Form>
-                <Row>
-                  <Col sm='12' className='mb-1'>
-                    <Label className='form-label' for='nameVertical'>
-                      Kategori Adı
-                    </Label>
-                    <Input value={runame} onChange={e => setRuName(e.target.value)} type='text' name='name' id='nameVertical' placeholder='Kategori Adı' />
-                  </Col>
-                  <Col sm='12' className='mb-1'>
-                    <Label className='form-label' for='descriptionVertical'>
-                      Açıklama
-                    </Label>
-                    <Input value={rudescription} onChange={e => setRuDescription(e.target.value)} type='textarea' name='description' id='descriptionVertical' placeholder='Açıklama' />
-                  </Col>
-                </Row>
-              </Form>
-            </TabPane>
-          </TabContent>
-        </CardBody>
-        <CardFooter>
-          <div className='d-flex'>
-            <Button className='me-1' color='primary' type='submit' onClick={(e) => {
-              e.preventDefault();
-              submitForm();
-            }}>
-              Kaydet
-            </Button>
-          </div>
-        </CardFooter>
+                          name='clear'
+                          options={categories}
+                          isClearable
+                          singleValue
+                          placeholder='Kategori Seç'
+                          onChange={(e) => {
+                            if (e) {
+                              setRootCategory(e.value)
+                            } else {
+                              setRootCategory(null)
+                            }
+                          }
+                          }
+                        />
+                      </Col>
+                    </Row>
+                  </Form>
+                  <FileUploaderRestrictions clearImage={setCompressedFile} handleCompressedUpload={handleCompressedUpload} />
 
-      </Card>
+                </TabPane>
+                <TabPane tabId='2'>
+                  <Form>
+                    <Row>
+                      <Col sm='12' className='mb-1'>
+                        <Label className='form-label' for='nameVertical'>
+                          Kategori Adı
+                        </Label>
+                        <Input value={enname} onChange={e => setEnName(e.target.value)} type='text' name='name' id='nameVertical' placeholder='Kategori Adı' />
+                      </Col>
+                      <Col sm='12' className='mb-1'>
+                        <Label className='form-label' for='descriptionVertical'>
+                          Açıklama
+                        </Label>
+                        <Input value={endescription} onChange={e => setEnDescription(e.target.value)} type='textarea' name='description' id='descriptionVertical' placeholder='Açıklama' />
+                      </Col>
+                    </Row>
+                  </Form>
+                </TabPane>
+                <TabPane tabId='3'>
+                  <Form>
+                    <Row>
+                      <Col sm='12' className='mb-1'>
+                        <Label className='form-label' for='nameVertical'>
+                          Kategori Adı
+                        </Label>
+                        <Input value={runame} onChange={e => setRuName(e.target.value)} type='text' name='name' id='nameVertical' placeholder='Kategori Adı' />
+                      </Col>
+                      <Col sm='12' className='mb-1'>
+                        <Label className='form-label' for='descriptionVertical'>
+                          Açıklama
+                        </Label>
+                        <Input value={rudescription} onChange={e => setRuDescription(e.target.value)} type='textarea' name='description' id='descriptionVertical' placeholder='Açıklama' />
+                      </Col>
+                    </Row>
+                  </Form>
+                </TabPane>
+              </TabContent>
+            </CardBody>
+            <CardFooter>
+              <div className='d-flex'>
+                <Button className='me-1' color='primary' type='submit' onClick={(e) => {
+                  e.preventDefault();
+                  submitForm();
+                }}>
+                  Kaydet
+                </Button>
+              </div>
+            </CardFooter>
 
-    </Fragment>
-  )
+          </Card> :
+          <div></div>
+        }
+
+      </Fragment >
+    )
+  }
 }
 export default PillFilled

@@ -2,6 +2,8 @@
 import { Fragment, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify'
+import Select from 'react-select'
+
 import Avatar from '@components/avatar'
 import { X, DownloadCloud } from 'react-feather'
 import qs from 'qs';
@@ -25,6 +27,9 @@ const PillFilled = () => {
   const [trname, setTrName] = useState('');
   const [enname, setEnName] = useState('');
   const [runame, setRuName] = useState('');
+  // Root Category States 
+  const [rootcategory, setRootCategory] = useState(null);
+
   //Description States
   const [trdescription, setTrDescription] = useState('');
   const [endescription, setEnDescription] = useState('');
@@ -34,6 +39,7 @@ const PillFilled = () => {
 
   const [compressedFile, setCompressedFile] = useState(null);
   const [imageStatus, setImageStatus] = useState(false);
+  const [categories, setCategories] = useState([]);
 
   const handleCompressedUpload = (file) => {
     const image = file;
@@ -50,6 +56,24 @@ const PillFilled = () => {
       }
     });
   };
+
+  useEffect(async () => {
+
+    try {
+      const categories = await axios.get('/admin/categories').catch(err => { throw err.response.status });
+      const selectCategories = categories.data.map(category => { return { label: category.tr.name, value: category._id } })
+      setCategories(selectCategories);
+    } catch (err) {
+      if (err === 404) {
+        toast.error(<ErrorToast message={'Bir Hata Oluştu !'} />, { icon: false, hideProgressBar: true })
+        navigate.push('/categories');
+      } else if (err === 401) {
+        dispatch(unAuthorized())
+      }
+    }
+  }, [])
+
+
   useEffect(() => {
     if (compressedFile) {
       setImageStatus(true)
@@ -67,6 +91,7 @@ const PillFilled = () => {
     setTrDescription('')
     setEnDescription('')
     setRuDescription('')
+    setRootCategory(null)
     setCompressedFile(null)
   }
 
@@ -78,23 +103,35 @@ const PillFilled = () => {
     if ((imageStatus && compressedFile) && (trname && trdescription)) {
 
       const formData = new FormData();
-      const json = {
-        tr: { name: trname, description: trdescription }
-      }
+
+
+      const json = rootcategory ?
+        {
+          tr: { name: trname, description: trdescription },
+          en: { name: enname, description: endescription },
+          ru: { name: runame, description: rudescription },
+          rootcategory: rootcategory
+        } :
+        {
+          tr: { name: trname, description: trdescription },
+          en: { name: enname, description: endescription },
+          ru: { name: runame, description: rudescription }
+        };
+
       // The third parameter is required for server
       formData.append('image', compressedFile, compressedFile.name);
       formData.set('category', qs.stringify(json));
 
       try {
         // Send the compressed image file to server with XMLHttpRequest.
-        axios.post('/admin/add-category', formData).catch(err => { throw err.response.status })
+        await axios.post('/admin/add-category', formData).catch(err => { throw err.response.status })
         handleSuccess({ title: 'Kayıt Başarılı', timer: 1200, message: 'Kategori başarılı bir şekilde kayıt edildi.' });
         setTimeout(() => {
           clearStates();
           navigate.push('/categories')
         }, 1200)
       } catch (err) {
-        if (err === 404) {
+        if (err === 501) {
           toast.error(<ErrorToast message={'Kayıt İşlemi Başarısız oldu'} />, { icon: false, hideProgressBar: true })
 
         } else if (err === 401) {
@@ -166,6 +203,22 @@ const PillFilled = () => {
                       Açıklama
                     </Label>
                     <Input value={trdescription} onChange={e => setTrDescription(e.target.value)} type='textarea' name='description' id='descriptionVertical' placeholder='Açıklama' />
+                  </Col>
+                  <Col sm='12' className='mb-1'>
+                    <Label className='form-label'>Kategori</Label>
+                    <Select
+                      noOptionsMessage={({ inputValue: string }) => 'Kategori Bulunamadı...'}
+                      // theme={selectThemeColors}
+                      className='react-select'
+                      classNamePrefix='select'
+                      // defaultValue={categories[1]}
+                      name='clear'
+                      options={categories}
+                      isClearable
+                      singleValue
+                      placeholder='Kategori Seç'
+                      onChange={(e) => { setRootCategory(e.value) }}
+                    />
                   </Col>
                 </Row>
               </Form>

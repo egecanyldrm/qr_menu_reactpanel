@@ -26,7 +26,7 @@ const Permissions = () => {
 
     } catch (err) {
       if (err === 404) {
-        setStatus(false)
+        console.log(err)
       } else if (err === 401) {
         dispatch(unAuthorized())
       }
@@ -35,7 +35,7 @@ const Permissions = () => {
 
   const removeCategory = (id) => {
 
-    deleteSwal({title : 'Kategori'})
+    deleteSwal({ title: 'Kategori' })
       .then((result) => {
         if (result.isConfirmed) {
 
@@ -55,12 +55,9 @@ const Permissions = () => {
 
   return (
     <Fragment>
-
       <Card>
         <div className='card-datatable app-user-list table-responsive'>
-
           <Table removeCategory={removeCategory} data={categories} />
-
         </div>
       </Card>
     </Fragment>

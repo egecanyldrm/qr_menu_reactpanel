@@ -50,7 +50,7 @@ const DataTablesBasic = (props) => {
         id: category._id,
         title: category.tr.name,
         description: category.tr.description,
-        action: <Button.Ripple className='btn-icon' color='flat-success' ><Edit size={17} /></Button.Ripple>,
+        action: <Link to={`/edit-category/${category._id}`}><Button.Ripple className='btn-icon' color='flat-success' ><Edit size={17} /></Button.Ripple></Link>,
         remove: <Button.Ripple onClick={() => { props.removeCategory(category._id) }} className='btn-icon' color='flat-danger' ><Trash size={17} /></Button.Ripple>
       }
     });
@@ -81,7 +81,7 @@ const DataTablesBasic = (props) => {
     }
   }
 
- 
+
 
   return (
     <Card className='overflow-hidden'>

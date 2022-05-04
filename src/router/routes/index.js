@@ -25,7 +25,7 @@ const Routes = [
     component: lazy(() => import('../../views/Categories/addCategory'))
   },
   {
-    path: '/edit-category',
+    path: '/edit-category/:categoryid',
     component: lazy(() => import('../../views/Categories/editCategory'))
   },
 
