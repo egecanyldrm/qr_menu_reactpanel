@@ -20,6 +20,8 @@ import VerticalLayout from '@src/layouts/VerticalLayout'
 import HorizontalLayout from '@src/layouts/HorizontalLayout'
 import { useSelector } from 'react-redux'
 
+import LoginPage from '../views/Login'
+
 const Router = () => {
   // ** Hooks
   const { layout, setLayout, setLastLayout } = useLayout()
@@ -61,43 +63,6 @@ const Router = () => {
   // ** Init Error Component
   const Error = lazy(() => import('@src/views/Error'))
 
-  /**
-   ** Final Route Component Checks for Login & User Role and then redirects to the route
-   */
-  // const FinalRoute = props => {
-  //   const route = props.route
-  //   let action, resource
-
-  //   // ** Assign vars based on route meta
-  //   if (route.meta) {
-  //     action = route.meta.action ? route.meta.action : null
-  //     resource = route.meta.resource ? route.meta.resource : null
-  //   }
-
-  //   if (
-  //     (!isUserLoggedIn() && route.meta === undefined) ||
-  //     (!isUserLoggedIn() && route.meta && !route.meta.authRoute && !route.meta.publicRoute)
-  //   ) {
-  //     /**
-  //      ** If user is not Logged in & route meta is undefined
-  //      ** OR
-  //      ** If user is not Logged in & route.meta.authRoute, !route.meta.publicRoute are undefined
-  //      ** Then redirect user to login
-  //      */
-
-  //     return <Redirect to='/login' />
-  //   } else if (route.meta && route.meta.authRoute && isUserLoggedIn()) {
-  //     // ** If route has meta and authRole and user is Logged in then redirect user to home page (DefaultRoute)
-  //     return <Redirect to='/' />
-  //   } else if (isUserLoggedIn() && !ability.can(action || 'read', resource)) {
-  //     // ** If user is Logged in and doesn't have ability to visit the page redirect the user to Not Authorized
-  //     return <Redirect to='/misc/not-authorized' />
-  //   } else {
-  //     // ** If none of the above render component
-  //     return <route.component {...props} />
-  //   }
-  // }
-
   // ** Return Route to Render
   const ResolveRoutes = () => {
     return Object.keys(Layouts).map((layout, index) => {
@@ -119,7 +84,7 @@ const Router = () => {
 
       return (
         <Route path={LayoutPaths} key={index}>
-          {!auth.isLogin ? <Redirect to="/login" /> : <Redirect to="/home" />}
+
           <LayoutTag
             layout={layout}
             setLayout={setLayout}
@@ -129,64 +94,64 @@ const Router = () => {
             setTransition={setTransition}
             currentActiveItem={currentActiveItem}
           >
-              <Switch>
-                {LayoutRoutes.map(route => {
-                  return (
-                    <Route
-                      key={route.path}
-                      path={route.path}
-                      exact={route.exact === true}
-                      render={props => {
-                        // ** Assign props to routerProps
-                        Object.assign(routerProps, {
-                          ...props,
-                          meta: route.meta
-                        })
+            <Switch>
+              {LayoutRoutes.map(route => {
+                return (
+                  <Route
+                    key={route.path}
+                    path={route.path}
+                    exact={route.exact === true}
+                    render={props => {
+                      // ** Assign props to routerProps
+                      Object.assign(routerProps, {
+                        ...props,
+                        meta: route.meta
+                      })
 
-                        return (
-                          <Fragment>
-                            {/* Layout Wrapper to add classes based on route's layout, appLayout and className */}
+                      return (
+                        <Fragment>
+                          {/* Layout Wrapper to add classes based on route's layout, appLayout and className */}
 
-                            {route.layout === 'BlankLayout' ? (
-                              <Fragment>
+                          {route.layout === 'BlankLayout' ? (
+                            <Fragment>
+                              <route.component {...props} />
+                            </Fragment>
+                          ) : (
+                            <LayoutWrapper
+                              layout={DefaultLayout}
+                              transition={transition}
+                              setTransition={setTransition}
+                              /* Conditional props */
+                              /*eslint-disable */
+                              {...(route.appLayout
+                                ? {
+                                  appLayout: route.appLayout
+                                }
+                                : {})}
+                              {...(route.meta
+                                ? {
+                                  routeMeta: route.meta
+                                }
+                                : {})}
+                              {...(route.className
+                                ? {
+                                  wrapperClass: route.className
+                                }
+                                : {})}
+                            /*eslint-enable */
+                            >
+                              <Suspense fallback={null}>
                                 <route.component {...props} />
-                              </Fragment>
-                            ) : (
-                              <LayoutWrapper
-                                layout={DefaultLayout}
-                                transition={transition}
-                                setTransition={setTransition}
-                                /* Conditional props */
-                                /*eslint-disable */
-                                {...(route.appLayout
-                                  ? {
-                                    appLayout: route.appLayout
-                                  }
-                                  : {})}
-                                {...(route.meta
-                                  ? {
-                                    routeMeta: route.meta
-                                  }
-                                  : {})}
-                                {...(route.className
-                                  ? {
-                                    wrapperClass: route.className
-                                  }
-                                  : {})}
-                              /*eslint-enable */
-                              >
-                                <Suspense fallback={null}>
-                                  <route.component {...props} />
-                                </Suspense>
-                              </LayoutWrapper>
-                            )}
-                          </Fragment>
-                        )
-                      }}
-                    />
-                  )
-                })}
-              </Switch>
+                              </Suspense>
+                            </LayoutWrapper>
+                          )}
+                        </Fragment>
+                      )
+                    }}
+                  />
+                )
+              })}
+            </Switch>
           </LayoutTag>
         </Route>
       )
@@ -204,8 +169,9 @@ const Router = () => {
             return <Redirect to={DefaultRoute} />
           }}
         />
-        {/* Not Auth Route */}
-        <Route
+        {/* Not Auth Route
+      
+      <Route
           exact
           path='/misc/not-authorized'
           render={() => (
@@ -214,7 +180,23 @@ const Router = () => {
             </Layouts.BlankLayout>
           )}
         />
-        {ResolveRoutes()}
+      */}
+        {!auth.isLogin ?
+          <Fragment>
+            <Redirect push to="/login" />
+            <Route path="/login">
+              <LoginPage />
+            </Route>
+          </Fragment>
+          :
+          <Fragment>
+            <Redirect push to="/home" />
+            {ResolveRoutes()}
+          </Fragment>
+
+        }
+
+
 
         {/* NotFound Error page */}
         <Route path='*' component={Error} />

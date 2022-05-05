@@ -217,7 +217,13 @@ const PillFilled = () => {
                       isClearable
                       singleValue
                       placeholder='Kategori Seç'
-                      onChange={(e) => { setRootCategory(e.value) }}
+                      onChange={(e) => {
+                        if (e) {
+                          setRootCategory(e.value)
+                        } else {
+                          setRootCategory(null)
+                        }
+                      }}
                     />
                   </Col>
                 </Row>

@@ -28,6 +28,10 @@ const Routes = [
     path: '/edit-category/:categoryid',
     component: lazy(() => import('../../views/Categories/editCategory'))
   },
+  {
+    path: '/edit-product/:productid',
+    component: lazy(() => import('../../views/Products/editProduct'))
+  },
 
   {
     path: '/add-product',

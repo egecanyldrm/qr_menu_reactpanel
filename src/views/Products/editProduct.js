@@ -27,6 +27,9 @@ const PillFilled = () => {
   const [trname, setTrName] = useState('');
   const [enname, setEnName] = useState('');
   const [runame, setRuName] = useState('');
+
+  const [price, setPrice] = useState('');
+
   // Root Category States 
   const [rootcategory, setRootCategory] = useState();
   const [defaultCategory, setDefaultCategory] = useState();
@@ -62,24 +65,31 @@ const PillFilled = () => {
   useEffect(async () => {
     try {
       setResponseStatus(false);
-      const { data } = await axios.post('/admin/get-category', { categoryId: params.categoryid }).catch(err => { throw err.response.status });
-      setTrName(data.category.tr.name);
-      setTrDescription(data.category.tr.description);
+      const { data } = await axios.post('/admin/get-product', { productId: params.productid }).catch(err => { throw err.response.status });
+      console.log(data)
+
+      setTrName(data.product.tr.name);
+      setTrDescription(data.product.tr.description);
+
+      //Kategorilerin Yüklenmesi
       const selectCategories = data.categories.map(category => { return { label: category.tr.name, value: category._id } })
       setCategories(selectCategories)
-      if (data.rootcategory) {
-        let category = data.rootcategory;
-        const defaultRootCategory = { label: category.tr.name, value: category._id }
-        setDefaultCategory(defaultRootCategory)
-        setRootCategory(defaultRootCategory.value)
+
+      //Ürünün kategorisi
+      let category = data.product.categoryid;
+      const defaultRootCategory = { label: category.tr.name, value: category._id }
+      setDefaultCategory(defaultRootCategory);
+      setRootCategory(defaultRootCategory.value);
+
+      setPrice(data.product.price)
+
+      if (data.product.en) {
+        setEnName(data.product.en.name);
+        setEnDescription(data.product.en.description);
       }
-      if (data.category.en) {
-        setEnName(data.category.en.name);
-        setEnDescription(data.category.en.description);
-      }
-      if (data.category.ru) {
-        setRuName(data.category.ru.name);
-        setRuDescription(data.category.ru.description);
+      if (data.product.ru) {
+        setRuName(data.product.ru.name);
+        setRuDescription(data.product.ru.description);
       }
       setResponseStatus(true);
 
@@ -106,6 +116,7 @@ const PillFilled = () => {
     setTrName('');
     setEnName('');
     setRuName('');
+    setPrice('')
     setTrDescription('')
     setEnDescription('')
     setRuDescription('')
@@ -113,7 +124,7 @@ const PillFilled = () => {
   }
 
   const submitForm = async () => {
-    if ((imageStatus) || (trname && trdescription)) {
+    if ((imageStatus) || (trname && trdescription && price && rootcategory ) ) {
 
 
       const formData = new FormData();
@@ -122,23 +133,22 @@ const PillFilled = () => {
         tr: { name: trname, description: trdescription },
         en: { name: enname, description: endescription },
         ru: { name: runame, description: rudescription },
-        rootcategory: rootcategory
+        price: price,
+        categoryid: rootcategory
       }
-
-      // The third parameter is required for server
+      // Eğer resim varsa form datanın içine dahil ediliyor 
       if (compressedFile) {
-
         formData.append('image', compressedFile, compressedFile.name);
       }
-      formData.set('category', qs.stringify(json));
+      formData.set('product', qs.stringify(json));
 
       try {
         // Send the compressed image file to server with XMLHttpRequest.
-        await axios.post(`/admin/edit-category/${params.categoryid}`, formData).catch(err => { throw err.response.status })
-        handleSuccess({ title: 'Kayıt Başarılı', timer: 1200, message: 'Kategori başarılı bir şekilde kayıt edildi.' });
+        await axios.post(`/admin/edit-product/${params.productid}`, formData).catch(err => { throw err.response.status })
+        handleSuccess({ title: 'Kayıt Başarılı', timer: 1200, message: 'Ürün başarılı bir şekilde kayıt edildi.' });
         setTimeout(() => {
           clearStates();
-          navigate.push('/categories')
+          navigate.push('/products')
         }, 1200)
       } catch (err) {
         if (err === 404) {
@@ -150,11 +160,12 @@ const PillFilled = () => {
       }
 
     } else {
-      toast.error(<ErrorToast message={'Lütfen Zorunlu Alanları Doldurun : TR '} />, { icon: false, hideProgressBar: true })
+      toast.error(<ErrorToast message={'Lütfen Zorunlu Alanları Doldurun  Ürün Adı, Açıklama, Fiyat, Kategori '} />, { icon: false, hideProgressBar: true })
     }
   }
   {
     return (
+
       < Fragment >
         {responseStatus ?
           <Card>
@@ -203,15 +214,21 @@ const PillFilled = () => {
                     <Row>
                       <Col sm='12' className='mb-1'>
                         <Label className='form-label' for='nameVertical'>
-                          Kategori Adı
+                          Ürün Adı
                         </Label>
-                        <Input value={trname} onChange={e => setTrName(e.target.value)} type='text' name='name' id='nameVertical' placeholder='Kategori Adı' />
+                        <Input value={trname} onChange={e => setTrName(e.target.value)} type='text' name='name' id='nameVertical' placeholder='Ürün Adı' />
                       </Col>
                       <Col sm='12' className='mb-1'>
                         <Label className='form-label' for='descriptionVertical'>
                           Açıklama
                         </Label>
                         <Input value={trdescription} onChange={e => setTrDescription(e.target.value)} type='textarea' name='description' id='descriptionVertical' placeholder='Açıklama' />
+                      </Col>
+                      <Col sm='12' className='mb-1'>
+                        <Label className='form-label' for='descriptionVertical'>
+                          Fiyat
+                        </Label>
+                        <Input value={price} onChange={e => setPrice(e.target.value)} type='text' name='price' id='descriptionVertical' placeholder='Ürün Fiyatı' />
                       </Col>
                       <Col sm='12' className='mb-1'>
                         <Label className='form-label'>Kategori</Label>
@@ -256,6 +273,7 @@ const PillFilled = () => {
                         </Label>
                         <Input value={endescription} onChange={e => setEnDescription(e.target.value)} type='textarea' name='description' id='descriptionVertical' placeholder='Açıklama' />
                       </Col>
+
                     </Row>
                   </Form>
                 </TabPane>
@@ -264,9 +282,9 @@ const PillFilled = () => {
                     <Row>
                       <Col sm='12' className='mb-1'>
                         <Label className='form-label' for='nameVertical'>
-                          Kategori Adı
+                          Ürün Adı
                         </Label>
-                        <Input value={runame} onChange={e => setRuName(e.target.value)} type='text' name='name' id='nameVertical' placeholder='Kategori Adı' />
+                        <Input value={runame} onChange={e => setRuName(e.target.value)} type='text' name='name' id='nameVertical' placeholder='Ürün Adı' />
                       </Col>
                       <Col sm='12' className='mb-1'>
                         <Label className='form-label' for='descriptionVertical'>
