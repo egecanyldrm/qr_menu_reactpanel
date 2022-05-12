@@ -34,7 +34,7 @@ module.exports = {
     'block-spacing': 'off',
     'comma-dangle': 'error',
     'comma-spacing': 'error',
-    'comma-style': 'error',
+    'comma-style': 'off',
     'computed-property-spacing': 'error',
     'func-call-spacing': 'error',
     'implicit-arrow-linebreak': ['error', 'beside'],

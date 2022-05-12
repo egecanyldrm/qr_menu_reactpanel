@@ -1,4 +1,4 @@
-import { Home, ArrowRight, Package, Codepen } from 'react-feather'
+import { Home, Settings, Package, Codepen } from 'react-feather'
 
 export default [
   {
@@ -20,9 +20,16 @@ export default [
     navLink: '/products'
   },
   {
-    id: 'business',
-    title: 'İşletme',
-    icon: <Codepen size={20} />,
-    navLink: '/business'
+    id: 'theme-settings',
+    title: 'Tema Ayarları',
+    icon: <Settings size={20} />,
+    navLink: '/theme-settings'
+  }
+  ,
+  {
+    id: 'account-settings',
+    title: ' İşletme Ayarları',
+    icon: <Settings size={20} />,
+    navLink: '/account-settings'
   }
 ]

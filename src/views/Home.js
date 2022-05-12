@@ -1,32 +1,56 @@
 import { useSelector } from 'react-redux'
-import { Card, CardHeader, CardBody, CardTitle, CardText, CardLink } from 'reactstrap'
+import { Card, CardHeader, CardBody, CardTitle, CardText, CardLink, Button, Col } from 'reactstrap'
+import { Settings, Package, Codepen } from 'react-feather'
+import { Link } from 'react-router-dom'
 
 const Home = () => {
- 
+
   return (
-    <div>
+    <div className='row'>
+      <Col lg='6' md='6' sm='12'>
+        <Link to='/categories'>
+          <Card >
+            <CardBody className='text-center'>
+              <Codepen className='font-large-2 mb-1' />
+              <CardTitle tag='h5'>Kategoriler</CardTitle>
+            </CardBody>
+          </Card>
+        </Link>
+      </Col>
 
+      <Col lg='6' md='6' sm='12'>
+        <Link to='/products'>
+          <Card >
+            <CardBody className='text-center'>
+              <Package className='font-large-2 mb-1' />
+              <CardTitle tag='h5'>Ürünler</CardTitle>
+            </CardBody>
+          </Card>
+        </Link>
+      </Col>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Want to integrate JWT? 🔒</CardTitle>
-        </CardHeader>
-        <CardBody>
-          <CardText>
-            We carefully crafted JWT flow so you can implement JWT with ease and with minimum efforts.
-          </CardText>
-          <CardText>
-            Please read our{' '}
-            <CardLink
-              href='https://pixinvent.com/demo/vuexy-react-admin-dashboard-template/documentation/docs/development/auth'
-              target='_blank'
-            >
-              JWT Documentation
-            </CardLink>{' '}
-            to get more out of JWT authentication.
-          </CardText>
-        </CardBody>
-      </Card>
+      <Col lg='6' md='6' sm='12'>
+        <Link to='/theme-settings'>
+          <Card >
+            <CardBody className='text-center'>
+              <Settings className='font-large-2 mb-1' />
+              <CardTitle tag='h5'>Tema Ayarları</CardTitle>
+            </CardBody>
+          </Card>
+        </Link>
+      </Col>
+
+      <Col lg='6' md='6' sm='12'>
+        <Link to='/account-settings'>
+          <Card >
+            <CardBody className='text-center'>
+              <Settings className='font-large-2 mb-1' />
+              <CardTitle tag='h5'>İşletme Ayarları</CardTitle>
+            </CardBody>
+          </Card>
+        </Link>
+      </Col>
+     
     </div>
   )
 }

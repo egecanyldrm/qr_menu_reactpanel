@@ -169,18 +169,7 @@ const Router = () => {
             return <Redirect to={DefaultRoute} />
           }}
         />
-        {/* Not Auth Route
-      
-      <Route
-          exact
-          path='/misc/not-authorized'
-          render={() => (
-            <Layouts.BlankLayout>
-              <NotAuthorized />
-            </Layouts.BlankLayout>
-          )}
-        />
-      */}
+        
         {!auth.isLogin ?
           <Fragment>
             <Redirect push to="/login" />
@@ -195,10 +184,6 @@ const Router = () => {
           </Fragment>
 
         }
-
-
-
-        {/* NotFound Error page */}
         <Route path='*' component={Error} />
       </Switch>
     </AppRouter>

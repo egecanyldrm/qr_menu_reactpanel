@@ -32,10 +32,13 @@ const Routes = [
     path: '/edit-product/:productid',
     component: lazy(() => import('../../views/Products/editProduct'))
   },
-
   {
     path: '/add-product',
     component: lazy(() => import('../../views/Products/addProduct'))
+  },
+  {
+    path: '/account-settings',
+    component: lazy(() => import('../../views/AccountSettings/AccountSettings'))
   },
   {
     path: '/login',
