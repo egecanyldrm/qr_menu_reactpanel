@@ -14,6 +14,7 @@ import { Row, Col, Form, Card, Label, Button, CardBody, CardTitle, CardHeader, A
 import { handleSuccess } from '../../extension/basicalert';
 import axios from 'axios';
 import { useHistory } from "react-router-dom";
+import user from '../../assets/images/portrait/user.png'
 
 const AccountTabs = ({ userDetail }) => {
   const { register, handleSubmit, formState: { errors } } = useForm();

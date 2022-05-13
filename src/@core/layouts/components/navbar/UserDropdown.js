@@ -1,28 +1,11 @@
-// ** React Imports
 import { Link } from 'react-router-dom'
-import { useState } from 'react'
-
-// ** Custom Components
 import Avatar from '@components/avatar'
-
-// ** Utils
-// import { isUserLoggedIn } from '@utils'
-
-// ** Third Party Components
-import { User, Mail, CheckSquare, MessageSquare, Settings, CreditCard, HelpCircle, Power } from 'react-feather'
-
-// ** Reactstrap Imports
+import { Settings,  HelpCircle, Power } from 'react-feather'
 import { UncontrolledDropdown, DropdownMenu, DropdownToggle, DropdownItem } from 'reactstrap'
-
-// ** Default Avatar Image
-
 import { useDispatch, useSelector } from 'react-redux'
 import { logOut } from '../../../../redux/authentication'
-import userAvatar from '../../../../assets/images/portrait/user.png'
-const UserDropdown = () => {
-  // ** State
-  const [userData] = useState(null)
 
+const UserDropdown = () => {
   const state = useSelector(state => state.auth.user);
   const dispatch = useDispatch();
 
@@ -37,38 +20,21 @@ const UserDropdown = () => {
         <Avatar color='light-primary' content={state.name} initials status='online' />
       </DropdownToggle>
       <DropdownMenu end>
-        <DropdownItem tag='a' href='/pages/profile' onClick={e => e.preventDefault()}>
-          <User size={14} className='me-75' />
-          <span className='align-middle'>Profile</span>
-        </DropdownItem>
-        <DropdownItem tag='a' href='/apps/email' onClick={e => e.preventDefault()}>
-          <Mail size={14} className='me-75' />
-          <span className='align-middle'>Inbox</span>
-        </DropdownItem>
-        <DropdownItem tag='a' href='/apps/todo' onClick={e => e.preventDefault()}>
-          <CheckSquare size={14} className='me-75' />
-          <span className='align-middle'>Tasks</span>
-        </DropdownItem>
-        <DropdownItem tag='a' href='/apps/chat' onClick={e => e.preventDefault()}>
-          <MessageSquare size={14} className='me-75' />
-          <span className='align-middle'>Chats</span>
-        </DropdownItem>
-        <DropdownItem divider />
-        <DropdownItem tag='a' href='/pages/account-settings' onClick={e => e.preventDefault()}>
-          <Settings size={14} className='me-75' />
-          <span className='align-middle'>Settings</span>
-        </DropdownItem>
-        <DropdownItem tag='a' href='/pages/pricing' onClick={e => e.preventDefault()}>
-          <CreditCard size={14} className='me-75' />
-          <span className='align-middle'>Pricing</span>
-        </DropdownItem>
-        <DropdownItem tag='a' href='/pages/faq' onClick={e => e.preventDefault()}>
+
+        <Link to='/account-settings'>
+          <DropdownItem tag='li' >
+            <Settings size={14} className='me-75' />
+            <span className='align-middle'>Ayarlar</span>
+          </DropdownItem>
+        </Link>
+
+        <DropdownItem tag='a' href='/pages/faq' >
           <HelpCircle size={14} className='me-75' />
-          <span className='align-middle'>FAQ</span>
+          <span className='align-middle'>Yardım</span>
         </DropdownItem>
-        <DropdownItem tag={'button'} onClick={() => { dispatch(logOut()) }} >
+        <DropdownItem tag='a' onClick={() => { dispatch(logOut()) }} >
           <Power size={14} className='me-75' />
-          <span className='align-middle'>Logout</span>
+          <span className='align-middle'>Çıkış Yap</span>
         </DropdownItem>
       </DropdownMenu>
     </UncontrolledDropdown >

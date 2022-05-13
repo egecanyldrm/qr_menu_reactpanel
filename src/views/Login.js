@@ -4,7 +4,6 @@ import { Facebook, Twitter, GitHub } from 'react-feather'
 import InputPasswordToggle from '@components/input-password-toggle'
 import { Row, Col, CardTitle, CardText, Form, Label, Input, Button } from 'reactstrap'
 import '@styles/react/pages/page-authentication.scss'
-import { postLogin } from '../api/post'
 import { logIn, logOut, userNotFound } from '../redux/authentication'
 import { useDispatch } from 'react-redux'
 

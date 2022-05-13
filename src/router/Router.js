@@ -58,7 +58,6 @@ const Router = () => {
     return { LayoutRoutes, LayoutPaths }
   }
 
-  const NotAuthorized = lazy(() => import('@src/views/NotAuthorized'))
 
   // ** Init Error Component
   const Error = lazy(() => import('@src/views/Error'))
