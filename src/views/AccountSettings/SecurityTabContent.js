@@ -74,7 +74,6 @@ const SecurityTabContent = () => {
 
         try {
             const result = await axios.post(`/admin/change-password`, data).catch(err => { throw err.response.status });
-
             handleSuccess({ title: 'İşlem Başarılı', timer: 1200, message: 'Güncelleme başarılı bir şekilde yapıldı.' });
             setTimeout(() => {
                 navigate.push('/home')

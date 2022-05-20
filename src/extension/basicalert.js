@@ -34,6 +34,16 @@ export const handleSuccess = ({ message, timer, title }) => {
   })
 }
 
+export const handleWarning = ({ message, timer, title }) => {
+  return MySwal.fire({
+    title: title,
+    text: message,
+    icon: 'warning',
+    showConfirmButton: false,
+    timer: timer
+  })
+}
+
 export const deleteSwal = ({title}) => {
   return MySwal.fire({
     title: `${title} Silinsin mi ?`,

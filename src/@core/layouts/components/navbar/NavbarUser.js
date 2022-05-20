@@ -9,6 +9,7 @@ import { Sun, Moon } from 'react-feather'
 
 // ** Reactstrap Imports
 import { NavItem, NavLink } from 'reactstrap'
+import NotificationDropdown from './NotificationDropdown'
 
 const NavbarUser = props => {
   // ** Props
@@ -25,6 +26,7 @@ const NavbarUser = props => {
 
   return (
     <Fragment>
+
       <div className='bookmark-wrapper d-flex align-items-center'>
         <NavItem className='d-none d-lg-block'>
           <NavLink className='nav-link-style'>
@@ -33,6 +35,7 @@ const NavbarUser = props => {
         </NavItem>
       </div>
       <ul className='nav navbar-nav align-items-center ms-auto'>
+        <NotificationDropdown />
         <UserDropdown />
       </ul>
     </Fragment>

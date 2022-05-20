@@ -56,7 +56,6 @@ const PillFilled = () => {
         // compressedResult has the compressed file.
         // Use the compressed file to upload the images to your server.    
         setCompressedFile(compressedResult)
-        console.log(compressedResult);
       }
     });
   };
@@ -66,7 +65,6 @@ const PillFilled = () => {
     try {
       setResponseStatus(false);
       const { data } = await axios.post('/admin/get-product', { productId: params.productid }).catch(err => { throw err.response.status });
-      console.log(data)
 
       setTrName(data.product.tr.name);
       setTrDescription(data.product.tr.description);
@@ -174,6 +172,8 @@ const PillFilled = () => {
                 <NavItem>
                   <NavLink
                     active={active === '1'}
+                    style={state.language === false ? { maxWidth: '25%' } : {}}
+
                     onClick={() => {
                       toggle('1')
                     }}

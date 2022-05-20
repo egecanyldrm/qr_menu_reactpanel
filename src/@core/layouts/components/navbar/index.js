@@ -9,11 +9,13 @@ import { Menu } from 'react-feather'
 
 // ** Reactstrap Imports
 import { NavItem, NavLink } from 'reactstrap'
+import NotificationDropdown from './NotificationDropdown'
 
 const ThemeNavbar = props => {
   // ** Props
   const { skin, setSkin, setMenuVisibility } = props
 
+  
   return (
     <Fragment>
       <ul className='navbar-nav d-xl-none'>
@@ -23,7 +25,7 @@ const ThemeNavbar = props => {
           </NavLink>
         </NavItem>
       </ul>
-      <NavbarUser skin={skin} setSkin={setSkin} />
+        <NavbarUser skin={skin} setSkin={setSkin} />
     </Fragment>
   )
 }

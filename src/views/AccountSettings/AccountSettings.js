@@ -34,6 +34,7 @@ const AccountSettings = () => {
 
     try {
       const { data } = await axios.get('/admin/business-detail').catch(err => { throw err.response.status })
+     
       setData(data)
       setResultStatus(true)
     } catch (err) {

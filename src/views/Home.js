@@ -1,9 +1,29 @@
 import { useSelector } from 'react-redux'
 import { Card, CardHeader, CardBody, CardTitle, CardText, CardLink, Button, Col } from 'reactstrap'
-import { Settings, Package, Codepen } from 'react-feather'
+import { Settings, Package, Codepen, Users } from 'react-feather'
 import { Link } from 'react-router-dom'
 
 const Home = () => {
+  const state = useSelector(state => state.auth);
+  console.log(state)
+
+  if (!state.user.role) {
+    return (
+      <div className="row">
+        <Col lg='6' md='6' sm='12'>
+          <Link to='/customer'>
+            <Card >
+              <CardBody className='text-center'>
+                <Users className='font-large-2 mb-1' />
+                <CardTitle tag='h5'>Müşteriler </CardTitle>
+              </CardBody>
+            </Card>
+          </Link>
+        </Col>
+      </div>
+    )
+  }
+
 
   return (
     <div className='row'>
@@ -50,7 +70,7 @@ const Home = () => {
           </Card>
         </Link>
       </Col>
-     
+
     </div>
   )
 }

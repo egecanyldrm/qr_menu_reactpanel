@@ -3,18 +3,21 @@
 import Layout from '@layouts/VerticalLayout'
 
 // ** Menu Items Array
-import navigation from '@src/navigation/vertical'
+import { customer, owner } from '@src/navigation/vertical'
+import { useSelector } from 'react-redux'
 
 const VerticalLayout = props => {
-  // const [menuData, setMenuData] = useState([])
 
-  // ** For ServerSide navigation
-  // useEffect(() => {
-  //   axios.get(URL).then(response => setMenuData(response.data))
-  // }, [])
-
+  const state = useSelector(state => state.auth)
+  if (!state.user.role) {
+    return (
+      <Layout menuData={owner} {...props}>
+        {props.children}
+      </Layout>
+    )
+  }
   return (
-    <Layout menuData={navigation} {...props}>
+    <Layout menuData={customer} {...props}>
       {props.children}
     </Layout>
   )

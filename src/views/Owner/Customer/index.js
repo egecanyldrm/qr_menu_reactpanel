@@ -4,38 +4,38 @@ import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 // ** Reactstrap Imports
 import { Card } from 'reactstrap'
-import { deleteSwal } from '../../extension/basicalert';
+import { deleteSwal } from '../../../extension/basicalert'
 // ** Table Import
 import Table from './Table'
 import { useState } from 'react'
 import { Spinner } from 'reactstrap'
 import axios from 'axios'
 import { useDispatch } from 'react-redux'
-import { unAuthorized } from '../../redux/authentication'
+import { unAuthorized } from '../../../redux/authentication'
 
 const Permissions = () => {
 
-  const [categories, setCategories] = useState([]);
+  const [customers, setCustomers] = useState([]);
   const dispatch = useDispatch();
 
   useEffect(async () => {
 
     try {
-      const categories = await axios.get('/admin/categories').catch(err => { throw err.response.status });
-      setCategories(categories.data);
+      const customers = await axios.get('/owner/customers').catch(err => { throw err.response.status });
+      setCustomers(customers.data);
 
     } catch (err) {
       if (err === 404) {
-        // İşlem yapılmadı 
+    
       } else if (err === 401) {
         dispatch(unAuthorized())
       }
     }
   }, [])
 
-  const removeCategory = (id) => {
+  const removeCustomer = (id) => {
 
-    deleteSwal({title : 'Kategori'})
+    deleteSwal({ title: 'Kategori' })
       .then((result) => {
         if (result.isConfirmed) {
 
@@ -58,9 +58,7 @@ const Permissions = () => {
 
       <Card>
         <div className='card-datatable app-user-list table-responsive'>
-
-          <Table removeCategory={removeCategory} data={categories} />
-
+          <Table removeCustomer={removeCustomer} data={customers} />
         </div>
       </Card>
     </Fragment>

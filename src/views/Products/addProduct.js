@@ -102,7 +102,7 @@ const PillFilled = () => {
 
 
   const submitForm = async () => {
-    if ((imageStatus && compressedFile) && (trname && trdescription && price && rootcategory )) {
+    if ((imageStatus && compressedFile) && (trname && trdescription && price && rootcategory)) {
 
       const formData = new FormData();
 
@@ -152,6 +152,8 @@ const PillFilled = () => {
             <NavItem>
               <NavLink
                 active={active === '1'}
+                style={state.language === false ? { maxWidth: '25%' } : {}}
+
                 onClick={() => {
                   toggle('1')
                 }}

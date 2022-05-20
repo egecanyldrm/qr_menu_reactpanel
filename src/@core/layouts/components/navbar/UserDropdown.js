@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import Avatar from '@components/avatar'
-import { Settings,  HelpCircle, Power } from 'react-feather'
+import { Settings, HelpCircle, Power } from 'react-feather'
 import { UncontrolledDropdown, DropdownMenu, DropdownToggle, DropdownItem } from 'reactstrap'
 import { useDispatch, useSelector } from 'react-redux'
 import { logOut } from '../../../../redux/authentication'
@@ -22,13 +22,12 @@ const UserDropdown = () => {
       <DropdownMenu end>
 
         <Link to='/account-settings'>
-          <DropdownItem tag='li' >
+          <DropdownItem tag='span' >
             <Settings size={14} className='me-75' />
             <span className='align-middle'>Ayarlar</span>
           </DropdownItem>
         </Link>
-
-        <DropdownItem tag='a' href='/pages/faq' >
+        <DropdownItem tag='a' href='/help' >
           <HelpCircle size={14} className='me-75' />
           <span className='align-middle'>Yardım</span>
         </DropdownItem>

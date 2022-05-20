@@ -6,6 +6,7 @@ export const checkLogin = createAsyncThunk(
   'checkLogin',
   async (token) => {
     const response = await axios.post('http://localhost:4000/islogin',
+
       {
         token: token
       }

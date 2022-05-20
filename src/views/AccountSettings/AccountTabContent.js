@@ -14,9 +14,10 @@ import { Row, Col, Form, Card, Label, Button, CardBody, CardTitle, CardHeader, A
 import { handleSuccess } from '../../extension/basicalert';
 import axios from 'axios';
 import { useHistory } from "react-router-dom";
-import user from '../../assets/images/portrait/user.png'
+import { saveAs } from "file-saver";
 
 const AccountTabs = ({ userDetail }) => {
+  console.log(userDetail)
   const { register, handleSubmit, formState: { errors } } = useForm();
   const [compressedFile, setCompressedFile] = useState(null);
   const [imageUrl, setImageUrl] = useState(null);
@@ -50,7 +51,6 @@ const AccountTabs = ({ userDetail }) => {
   }
 
   const onSubmit = async (data) => {
-    
     const formData = new FormData();
     if (compressedFile) {
       formData.append('image', compressedFile, compressedFile.name);
@@ -102,23 +102,35 @@ const AccountTabs = ({ userDetail }) => {
                 console.log(error)
               })
             }} >
-              <div className='d-flex'>
-                <div className='me-25'>
-                  {imageUrl ?
-                    <img className='rounded me-50' src={imageUrl} alt='İşletmeye ait logo ' height='100' width='100' />
-                    : <img className='rounded me-50' src={userDetail.logoUrl} alt='İşletmeye ait logo ' height='100' width='100' />
-                  }
+              <Row>
+                <div className='d-flex col '>
+                  <div className='me-25'>
+                    {imageUrl ?
+                      <img className='rounded me-50' src={imageUrl} alt='İşletmeye ait logo ' height='100' width='100' />
+                      : <img className='rounded me-50' src={userDetail.userLogo} alt='İşletmeye ait logo ' height='100' width='100' />
+                    }
+                  </div>
+                  <div className='d-flex justify-content-between align-items-end mt-75 ms-1'>
+                    <div>
+                      <Button tag={Label} className='mb-75 me-75' size='sm' color='primary'>
+                        Yükle
+                        <input className='form-control' type='file' hidden accept='image/*' onChange={setImage} />
+                      </Button>
+                      <p className='mb-0'> JPG veya PNG türünde yükleme yapınız</p>
+                    </div>
+                  </div>
+
+
+
                 </div>
-                <div className='d-flex align-items-end mt-75 ms-1'>
+                <div className='col d-flex justify-content-end'>
                   <div>
-                    <Button tag={Label} className='mb-75 me-75' size='sm' color='primary'>
-                      Yükle
-                      <input className='form-control' type='file' hidden accept='image/*' onChange={setImage} />
-                    </Button>
-                    <p className='mb-0'> JPG veya PNG türünde yükleme yapınız</p>
+                    <img alt="ImageName" src={userDetail.qrcode} style={{ height: 100, width: 100 }} />
+
+                    <a href={userDetail.qrcode}  className='btn btn-primary ms-4'  download> İndir</a>
                   </div>
                 </div>
-              </div>
+              </Row>
 
               <Row className='mt-2'>
                 <Col sm='6' className='mb-1'>
@@ -167,7 +179,7 @@ const AccountTabs = ({ userDetail }) => {
         <div></div>
       }
 
-    </Fragment>
+    </Fragment >
   )
 }
 

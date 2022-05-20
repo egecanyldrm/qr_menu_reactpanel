@@ -153,6 +153,7 @@ const PillFilled = () => {
             <NavItem>
               <NavLink
                 active={active === '1'}
+                style={state.language === false ? { maxWidth: '25%' } : {}}
                 onClick={() => {
                   toggle('1')
                 }}
@@ -281,7 +282,7 @@ const PillFilled = () => {
 
       </Card>
 
-    </Fragment>
+    </Fragment >
   )
 }
 export default PillFilled

@@ -59,4 +59,24 @@ const Routes = [
   }
 ]
 
-export { DefaultRoute, TemplateTitle, Routes }
+const AdminRoutes = [
+  {
+    path: '/home',
+    component: lazy(() => import('../../views/Home'))
+  },
+  {
+    path: '/customer',
+    component: lazy(() => import('../../views/Owner/Customer/index'))
+  },
+  {
+    path: '/add-customer',
+    component: lazy(() => import('../../views/Owner/Customer/AddCustomer'))
+  }
+  ,
+  {
+    path: '/edit-customer/:customerid',
+    component: lazy(() => import('../../views/Owner/Customer/EditCustomer'))
+  }
+]
+
+export { DefaultRoute, TemplateTitle, AdminRoutes, Routes }

@@ -1,6 +1,6 @@
-import { Home, Settings, Package, Codepen } from 'react-feather'
+import { Home, Settings, Package, Codepen, Users } from 'react-feather'
 
-export default [
+export const customer = [
   {
     id: 'home',
     title: 'Anasayfa',
@@ -33,3 +33,18 @@ export default [
     navLink: '/account-settings'
   }
 ]
+export const owner = [
+  {
+    id: 'home',
+    title: 'Anasayfa',
+    icon: <Home size={20} />,
+    navLink: '/home'
+  },
+  {
+    id: 'users',
+    title: 'Müşteriler',
+    icon: <Users size={20} />,
+    navLink: '/customer'
+  }
+]
+
