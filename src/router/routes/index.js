@@ -41,6 +41,10 @@ const Routes = [
     component: lazy(() => import('../../views/AccountSettings/AccountSettings'))
   },
   {
+    path: '/theme-settings/design-settings',
+    component: lazy(() => import('../../views/ThemeSettings/settings'))
+  },
+  {
     path: '/theme-settings',
     component: lazy(() => import('../../views/ThemeSettings/index'))
   },

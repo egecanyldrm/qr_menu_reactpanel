@@ -27,10 +27,13 @@ const UserDropdown = () => {
             <span className='align-middle'>Ayarlar</span>
           </DropdownItem>
         </Link>
-        <DropdownItem tag='a' href='/help' >
+        {/* 
+       <DropdownItem tag='a' href='/help' >
           <HelpCircle size={14} className='me-75' />
           <span className='align-middle'>Yardım</span>
         </DropdownItem>
+      
+      */}
         <DropdownItem tag='a' onClick={() => { dispatch(logOut()) }} >
           <Power size={14} className='me-75' />
           <span className='align-middle'>Çıkış Yap</span>

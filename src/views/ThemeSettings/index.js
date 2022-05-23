@@ -10,6 +10,7 @@ import { ErrorToast } from '../../extension/toast';
 
 //Tema resimlerini import edip daha sonra diziye ekle.
 import Atlas from '../../assets/images/portrait/Atlas.png'
+import { Link } from 'react-router-dom';
 
 const themes = [
     {
@@ -23,7 +24,7 @@ const themes = [
         imageUrl: Atlas
     },
     {
-        name: 'orion',
+        name: 'athena',
         description: [
             " Aşağıya doğru açılır akordiyon tasarımlı tema",
             " Ürünler Kare Format Olmalıdır."
@@ -66,9 +67,11 @@ const getTheme = (themeName) => {
                                 ))}
                             </ul>
                         </CardText>
-                        <Button className='mt-3 mb-2' color='primary' block >
-                            Temayı Düzenle
-                        </Button>
+                        <div className="d-grid gap-2">
+                            <Link to='/theme-settings/design-settings' className='btn btn-primary  mt-3 mb-2'>
+                                Temayı Düzenle
+                            </Link>
+                        </div>
                         <Button color='primary' block outline>
                             Önizle
                         </Button>
@@ -81,7 +84,7 @@ const getTheme = (themeName) => {
                     <CardImg className='shadow' top src={Atlas} alt='Card cap' />
                 </Card>
             </Col>
-        </Row >
+        </Row>
     )
 
 }
@@ -93,8 +96,8 @@ const index = () => {
     useEffect(async () => {
 
         try {
-            const { data } = await axios.get('/admin/theme-settings').catch(err => { throw err.response.status });
-            setData(data.themeSettings)
+            const { data } = await axios.get('/admin/get-theme').catch(err => { throw err.response.status });
+            setData(data.theme)
         } catch (err) {
             if (err === 404) {
                 toast.error(<ErrorToast message={'Bir Hata Oluştu !'} />, { icon: false, hideProgressBar: true })

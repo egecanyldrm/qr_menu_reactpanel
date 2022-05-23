@@ -53,7 +53,6 @@ const PillFilled = () => {
         // compressedResult has the compressed file.
         // Use the compressed file to upload the images to your server.    
         setCompressedFile(compressedResult)
-        console.log(compressedResult);
       }
     });
   };
@@ -155,7 +154,7 @@ const PillFilled = () => {
   }
   {
     return (
-      < Fragment >
+      <Fragment>
         {responseStatus ?
           <Card>
             <CardBody>
@@ -296,7 +295,7 @@ const PillFilled = () => {
           <div></div>
         }
 
-      </Fragment >
+      </Fragment>
     )
   }
 }

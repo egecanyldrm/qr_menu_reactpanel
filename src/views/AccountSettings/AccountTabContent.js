@@ -17,7 +17,7 @@ import { useHistory } from "react-router-dom";
 import { saveAs } from "file-saver";
 
 const AccountTabs = ({ userDetail }) => {
-  console.log(userDetail)
+  
   const { register, handleSubmit, formState: { errors } } = useForm();
   const [compressedFile, setCompressedFile] = useState(null);
   const [imageUrl, setImageUrl] = useState(null);
@@ -45,7 +45,6 @@ const AccountTabs = ({ userDetail }) => {
 
   const checkError = () => {
     if (errors.hasOwnProperty('contact') || errors.hasOwnProperty('name') || errors.hasOwnProperty('email') || errors.hasOwnProperty('companyName')) {
-      console.log(errors)
       toast.error(<ErrorToast message={'Lütfen Zorunlu Alanları Doldurunuz'} />, { icon: false, hideProgressBar: true })
     }
   }
@@ -62,9 +61,7 @@ const AccountTabs = ({ userDetail }) => {
       await axios.post(`/admin/update-business-detail`, formData).catch(err => { throw err.response.status });
 
       handleSuccess({ title: 'İşlem Başarılı', timer: 1200, message: 'Güncelleme başarılı bir şekilde yapıldı.' });
-      setTimeout(() => {
-        navigate.push('/home')
-      }, 1200)
+      
     } catch (err) {
       if (err === 404) {
         toast.error(<ErrorToast message={'Kayıt İşlemi Başarısız oldu'} />, { icon: false, hideProgressBar: true })
@@ -84,7 +81,7 @@ const AccountTabs = ({ userDetail }) => {
   useEffect(() => {
 
     if (compressedFile) {
-      console.log(compressedFile)
+   
     }
   }, [compressedFile])
   return (
@@ -99,7 +96,6 @@ const AccountTabs = ({ userDetail }) => {
             <Form className='mt-2 pt-50' onSubmit={() => {
               checkError();
               handleSubmit(onSubmit)(event).catch((error) => {
-                console.log(error)
               })
             }} >
               <Row>

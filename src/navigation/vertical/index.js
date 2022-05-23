@@ -1,4 +1,4 @@
-import { Home, Settings, Package, Codepen, Users } from 'react-feather'
+import { Home, Settings, Package, Codepen, Users, Tool } from 'react-feather'
 
 export const customer = [
   {
@@ -22,7 +22,7 @@ export const customer = [
   {
     id: 'theme-settings',
     title: 'Tema Ayarları',
-    icon: <Settings size={20} />,
+    icon: <Tool size={20} />,
     navLink: '/theme-settings'
   }
   ,

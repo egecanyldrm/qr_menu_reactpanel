@@ -14,7 +14,6 @@ export const handleBasicTitleAlert = (textmessage, icon, titles) => {
     icon: icon,
     title: titles,
     text: textmessage,
-    footer: '<a href="#">Yardıma mı ihtiyacın var ?</a>',
     focusConfirm: true,
     customClass: {
       confirmButton: 'btn btn-primary',

@@ -26,7 +26,7 @@ const Permissions = () => {
 
     } catch (err) {
       if (err === 404) {
-    
+
       } else if (err === 401) {
         dispatch(unAuthorized())
       }
@@ -35,17 +35,17 @@ const Permissions = () => {
 
   const removeCustomer = (id) => {
 
-    deleteSwal({ title: 'Kategori' })
+    deleteSwal({ title: 'Müşteri' })
       .then((result) => {
         if (result.isConfirmed) {
 
-          axios.post('/admin/delete-category', { categoryId: id })
+          axios.post('/owner/delete-customer', { customerId: id })
             .then(() => {
-              const newCategories = categories.filter(category => category._id !== id);
-              setCategories(newCategories)
+              const newCustomers = customers.filter(customer => customer._id !== id);
+              setCustomers(newCustomers)
               Swal.fire(
                 'Silindi!',
-                'Kategori Başarıyla Silindi.',
+                'Müşteri Başarıyla Silindi.',
                 'success'
               )
             }).catch(err => console.log(err))

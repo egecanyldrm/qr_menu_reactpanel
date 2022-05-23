@@ -69,7 +69,7 @@ const AddCustomer = () => {
                 <CardBody className='py-2 my-25'>
                     <Form className='mt-2 pt-50' onSubmit={() => {
                         handleSubmit(onSubmit)(event).catch((error) => {
-                            console.log(error)
+                         
                         })
                     }} >
 

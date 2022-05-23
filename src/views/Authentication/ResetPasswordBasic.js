@@ -72,7 +72,6 @@ const ResetPasswordBasic = () => {
 
     try {
       const result = await axios.post(`/reset-password`, data).catch(err => { throw err.response.status });
-      console.log(result)
       handleSuccess({ title: 'İşlem Başarılı', timer: 1500, message: 'Güncelleme başarılı bir şekilde yapıldı.' });
       setTimeout(() => {
         navigate.push('/login')
