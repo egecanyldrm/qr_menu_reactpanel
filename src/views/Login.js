@@ -58,7 +58,6 @@ const LoginCover = () => {
             <CardTitle tag='h2' className='fw-bold mb-1'>
               Hoş Geldin 👋
             </CardTitle>
-            <CardText className='mb-2'>Please sign-in to your account and start the adventure</CardText>
             <Form autoComplete='on' className='auth-login-form mt-2' onSubmit={e => handleLogin(e)}>
               <div className='mb-1'>
                 <Label className='form-label' for='login-email'>
