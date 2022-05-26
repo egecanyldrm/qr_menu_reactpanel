@@ -41,7 +41,7 @@ const PillFilled = () => {
   const handleCompressedUpload = (file) => {
     const image = file;
     new Compressor(image, {
-      quality: 0.8, // 0.6 can also be used, but its not recommended to go below.,
+      quality: 0.6, // 0.6 can also be used, but its not recommended to go below.,
       resize: 'cover',
       width: 1000,
       height: 1000,

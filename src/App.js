@@ -21,7 +21,7 @@ const App = () => {
             dispatch(checkLogin(token))
         }
         //Axios Config
-        axios.defaults.baseURL = 'http://localhost:4000';
+        axios.defaults.baseURL = 'https://api.egecanyildirim.com';
 
     }, [])
 
