@@ -29,7 +29,9 @@ const App = () => {
         if (state.isLogin === false) {
             handleBasicTitleAlert(state.message, state.status, state.title)
         }
-        axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
+        let access_token = localStorage.getItem('token')
+        axios.defaults.headers.common['Authorization'] = `Bearer ${access_token}`
+        // axios.defaults.headers.common['authorization'] = ;
 
     })
 
