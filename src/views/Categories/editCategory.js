@@ -47,8 +47,8 @@ const PillFilled = () => {
     new Compressor(image, {
       quality: 0.6, // 0.6 can also be used, but its not recommended to go below.,
       resize: 'cover',
-      width: 1000,
-      height: 1000,
+      width: 1200,
+      height: 1200,
       success: (compressedResult) => {
         // compressedResult has the compressed file.
         // Use the compressed file to upload the images to your server.    
