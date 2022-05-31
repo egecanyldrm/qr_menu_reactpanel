@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Card, Row, CardTitle, CardBody, Col, Button, CardFooter, CardHeader } from 'reactstrap'
 import { useForm, Controller } from 'react-hook-form';
 
@@ -8,7 +8,7 @@ import Switch from '@mui/material/Switch';
 import { toast } from 'react-toastify'
 import { ErrorToast } from '../../../extension/toast'
 import { unAuthorized } from '../../../redux/authentication';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 // ** Reactstrap Imports
 import { handleSuccess } from '../../../extension/basicalert';
 
@@ -70,10 +70,10 @@ const IOSSwitch = styled((props) => (
 const General = ({ general }) => {
 
     const dispatch = useDispatch();
+    const state = useSelector(state => state.auth.user.package)
     const defaultValues = {
         ...general
     };
-
     const { handleSubmit, reset, setValue, control } = useForm({ defaultValues });
 
     const onSubmit = async (data) => {
@@ -100,31 +100,59 @@ const General = ({ general }) => {
                         <Row>
                             <CardTitle className='mt-2' tag='h5'>Dil Ayarları</CardTitle>
 
-                            <Col>
+                            <Col >
                                 <label className='fw-bold'>İngilizce Dil Desteği :</label>
-                                <Controller
-                                    name="english"
-                                    control={control}
-                                    render={({ field }) => (
-                                        <IOSSwitch sx={{ m: 1 }}
-                                            onChange={(e) => field.onChange(e.target.checked)}
-                                            checked={field.value}
-                                        />
-                                    )}
-                                />
+                                {state === 'deluxe' ?
+                                    <Controller
+                                        name="english"
+                                        control={control}
+                                        render={({ field }) => (
+                                            <IOSSwitch sx={{ m: 1 }}
+                                                onChange={(e) => field.onChange(e.target.checked)}
+                                                checked={field.value}
+                                            />
+                                        )}
+                                    />
+                                    :
+                                    <Controller
+                                        name="english"
+                                        control={control}
+                                        render={({ field }) => (
+                                            <IOSSwitch sx={{ m: 1 }}
+                                                disabled
+                                                onChange={(e) => field.onChange(e.target.checked)}
+                                                checked={field.value}
+                                            />
+                                        )}
+                                    />
+                                }
                             </Col>
                             <Col>
                                 <label className='fw-bold'>Rusça Dil Desteği :</label>
-                                <Controller
-                                    name="russian"
-                                    control={control}
-                                    render={({ field }) => (
-                                        <IOSSwitch sx={{ m: 1 }}
-                                            onChange={(e) => field.onChange(e.target.checked)}
-                                            checked={field.value}
-                                        />
-                                    )}
-                                />
+                                {state === 'deluxe' ?
+                                    <Controller
+                                        name="russian"
+                                        control={control}
+                                        render={({ field }) => (
+                                            <IOSSwitch sx={{ m: 1 }}
+                                                onChange={(e) => field.onChange(e.target.checked)}
+                                                checked={field.value}
+                                            />
+                                        )}
+                                    />
+                                    :
+                                    <Controller
+                                        name="russian"
+                                        control={control}
+                                        render={({ field }) => (
+                                            <IOSSwitch sx={{ m: 1 }}
+                                                disabled
+                                                onChange={(e) => field.onChange(e.target.checked)}
+                                                checked={field.value}
+                                            />
+                                        )}
+                                    />
+                                }
                             </Col>
                         </Row>
                         <Row>

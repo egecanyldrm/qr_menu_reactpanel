@@ -32,7 +32,7 @@ const themes = [
         imageUrl: Atlas
     },
     {
-        name: 'vue',
+        name: 'capella',
         description: [
             " Aşağıya doğru açılır akordiyon tasarımlı tema",
             " Ürünler Kare Format Olmalıdır."
@@ -41,7 +41,25 @@ const themes = [
     }
     ,
     {
-        name: 'vue',
+        name: 'aphrodite',
+        description: [
+            "Aşağıya doğru açılır akordiyon tasarımlı tema",
+            "Ürünler Kare Format Olmalıdır."
+        ],
+        imageUrl: Atlas
+    }
+    ,
+    {
+        name: 'orion',
+        description: [
+            "Aşağıya doğru açılır akordiyon tasarımlı tema",
+            "Ürünler Kare Format Olmalıdır."
+        ],
+        imageUrl: Atlas
+    }
+    ,
+    {
+        name: 'troy',
         description: [
             "Aşağıya doğru açılır akordiyon tasarımlı tema",
             "Ürünler Kare Format Olmalıdır."
