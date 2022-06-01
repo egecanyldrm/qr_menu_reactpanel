@@ -52,9 +52,7 @@ const PricingCards = (props) => {
               <ListGroupItem tag='li'>
                 Tema  Özelleştirme
               </ListGroupItem>
-              <ListGroupItem tag='li'>
-                Konsept Temalar
-              </ListGroupItem>
+
             </ListGroup>
             <Button onClick={() => {
               if (props.package === 'deluxe') {
@@ -108,7 +106,7 @@ const PricingCards = (props) => {
                 İngilizce Ve Rusça  Dil Seçeneği
               </ListGroupItem>
               <ListGroupItem tag='li'>
-                Masadan sipariş verme
+                Masadan sipariş verme {'( Yakında )'}
               </ListGroupItem>
             </ListGroup>
             <Button
