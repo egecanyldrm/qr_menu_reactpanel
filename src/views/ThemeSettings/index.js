@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Card, Row, Col, CardImg, Spinner, CardText, Button, CardGroup, CardTitle, CardBody, ButtonGroup, CardFooter } from 'reactstrap'
+import { Card, Row, Col, CardImg, Spinner, Modal, ModalBody, ModalHeader, CardText, Button, Badge, CardTitle, CardBody, ButtonGroup, CardFooter, UncontrolledTooltip } from 'reactstrap'
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify'
 
@@ -11,33 +11,38 @@ import { ErrorToast } from '../../extension/toast';
 //Tema resimlerini import edip daha sonra diziye ekle.
 import Atlas from '../../assets/images/portrait/Atlas.png'
 import { Link } from 'react-router-dom';
-
+import { askSwal } from '../../extension/basicalert';
+import PricingCards from '../AccountSettings/PricingCards';
 const themes = [
-    {
-        name: 'atlas',
-        description: [
-            'Aşağıya doğru açılır akordiyon tasarımlı tema',
-            " Sadece ana kategori tanımlanmalıdır alt kategoriler gözükmeyecektir",
-            " <strong>Ürün resimleri kare format olmalıdır.</strong> ",
-            " Logonun maksimum yüksekliği 80px olarak kısıtlanmıştır. "
-        ],
-        imageUrl: Atlas
-    },
     {
         name: 'athena',
         description: [
             " Aşağıya doğru açılır akordiyon tasarımlı tema",
             " Ürünler Kare Format Olmalıdır."
         ],
-        imageUrl: Atlas
+        imageUrl: Atlas,
+        package: ['special']
     },
+    {
+        name: 'atlas',
+        description: [
+            'Aşağıya doğru açılır akordiyon tasarımlı tema',
+            " Sadece ana kategori tanımlanmalıdır alt kategoriler gözükmeyecektir",
+            " <strong>Ürün resimleri kare format olmalıdır.</strong> ",
+            " Logo işletme adı olarak kullanılacaktır. "
+        ],
+        imageUrl: Atlas,
+        package: ['deluxe']
+    },
+
     {
         name: 'capella',
         description: [
             " Aşağıya doğru açılır akordiyon tasarımlı tema",
             " Ürünler Kare Format Olmalıdır."
         ],
-        imageUrl: Atlas
+        imageUrl: Atlas,
+        package: ['deluxe']
     }
     ,
     {
@@ -46,7 +51,8 @@ const themes = [
             "Aşağıya doğru açılır akordiyon tasarımlı tema",
             "Ürünler Kare Format Olmalıdır."
         ],
-        imageUrl: Atlas
+        imageUrl: Atlas,
+        package: ['deluxe']
     }
     ,
     {
@@ -55,7 +61,8 @@ const themes = [
             "Aşağıya doğru açılır akordiyon tasarımlı tema",
             "Ürünler Kare Format Olmalıdır."
         ],
-        imageUrl: Atlas
+        imageUrl: Atlas,
+        package: ['deluxe']
     }
     ,
     {
@@ -64,7 +71,8 @@ const themes = [
             "Aşağıya doğru açılır akordiyon tasarımlı tema",
             "Ürünler Kare Format Olmalıdır."
         ],
-        imageUrl: Atlas
+        imageUrl: Atlas,
+        package: ['deluxe']
     }
 
 
@@ -110,7 +118,11 @@ const getTheme = (themeName) => {
 
 const index = () => {
     const [data, setData] = useState(null)
+    const [show, setShow] = useState(false)
+
     const dispatch = useDispatch();
+    const reduxUserPackage = useSelector(state => state.auth.user.package)
+    const user = useSelector(state => state.auth.user)
     useEffect(async () => {
 
         try {
@@ -143,6 +155,15 @@ const index = () => {
         }
     }
 
+
+    const askPackageUpdate = () => {
+        askSwal()
+            .then((result) => {
+                if (result.isConfirmed) {
+                    setShow(true)
+                }
+            }).catch(err => console.log(err))
+    }
     return (
         <section>
             {
@@ -165,9 +186,15 @@ const index = () => {
                 {themes.map((theme, key) => (
                     <Col lg='4' sm='12' key={key}>
                         <Card className='me-2 flex-nowrap' style={{ minHeight: '40rem' }} >
+                            {theme.package.includes('deluxe') &&
+                                <Badge color='success' className='badge-glow mb-1 position-absolute' style={{ right: 0 }}>
+                                    Premium Konsep Tema
+                                </Badge>
+                            }
                             <CardImg className='shadow-sm text-capitalize' top src={theme.imageUrl} alt='Image Card' />
                             <CardBody>
                                 <CardTitle className='text-capitalize' tag='h4'>{theme.name}</CardTitle>
+
                                 <CardText tag='ul'>
                                     {theme.description.map((item, key) => (
                                         <li key={key} dangerouslySetInnerHTML={{ __html: item }} ></li>
@@ -177,9 +204,22 @@ const index = () => {
                             </CardBody>
                             <CardFooter>
                                 <ButtonGroup className='w-100'>
-                                    <Button className='w-50' color='primary' onClick={() => { onClick(theme.name) }} >
-                                        Aktif Et
-                                    </Button>
+                                    {theme.package.includes(reduxUserPackage) ?
+                                        <Button className='w-50' color='primary' onClick={() => { onClick(theme.name) }} >
+                                            Aktif Et
+                                        </Button>
+                                        :
+                                        <React.Fragment>
+                                            <Button color='gradient-secondary' id='UnControlledExample' onClick={askPackageUpdate} >
+                                                Aktif Et
+                                            </Button>
+                                            <UncontrolledTooltip placement='top' target='UnControlledExample'>
+                                                Bu Temayı Etkinleştirmek İçin Delux Pakete Sahip Olmalısınız
+                                            </UncontrolledTooltip>
+                                        </React.Fragment>
+
+                                    }
+
                                     <Button className='ms-1 w-50' color='primary' outline>
                                         Önizle
                                     </Button>
@@ -189,7 +229,14 @@ const index = () => {
                     </Col>
                 ))}
             </Row>
+            <Modal isOpen={show} toggle={() => setShow(!show)} className='modal-dialog-centered modal-xl'>
+                <ModalHeader className='bg-transparent' toggle={() => setShow(!show)}></ModalHeader>
+                <ModalBody className='px-sm-5 mx-50 pb-5'>
+                    <h1 className='text-center mb-1'>Lisans Ve Paketler</h1>
 
+                    <PricingCards userName={user.name} package={user.package} />
+                </ModalBody>
+            </Modal>
         </section>
     )
 }

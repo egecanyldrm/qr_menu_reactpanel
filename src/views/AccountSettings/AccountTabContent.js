@@ -102,8 +102,8 @@ const AccountTabs = ({ userDetail }) => {
                 <div className='d-flex col '>
                   <div className='me-25'>
                     {imageUrl ?
-                      <img className='rounded me-50' src={imageUrl} alt='İşletmeye ait logo ' height='100' width='100' />
-                      : <img className='rounded me-50' src={userDetail.userLogo} alt='İşletmeye ait logo ' height='100' width='100' />
+                      <img className='rounded me-50 shadow' src={imageUrl} alt='İşletmeye ait logo ' height='100' width='100' />
+                      : <img className='rounded me-50 shadow' src={userDetail.userLogo} alt='İşletmeye ait logo ' height='100' width='100' />
                     }
                   </div>
                   <div className='d-flex justify-content-between align-items-end mt-75 ms-1'>
@@ -121,9 +121,9 @@ const AccountTabs = ({ userDetail }) => {
                 </div>
                 <div className='col d-flex justify-content-end'>
                   <div>
-                    <img alt="ImageName" src={userDetail.qrcode} style={{ height: 100, width: 100 }} />
+                    <img className='shadow-sm' alt="ImageName" src={userDetail.qrcode} style={{ height: 100, width: 100 }} />
 
-                    <a href={userDetail.qrcode}  className='btn btn-primary ms-4'  download> İndir</a>
+                    <a href={userDetail.qrcode}  className='btn btn-primary ms-4 '  download> İndir</a>
                   </div>
                 </div>
               </Row>

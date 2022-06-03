@@ -43,7 +43,7 @@ export const handleWarning = ({ message, timer, title }) => {
   })
 }
 
-export const deleteSwal = ({title}) => {
+export const deleteSwal = ({ title }) => {
   return MySwal.fire({
     title: `${title} Silinsin mi ?`,
     text: `Silindikten Sonra İşlem Geri Alınamaz !`,
@@ -52,6 +52,20 @@ export const deleteSwal = ({title}) => {
     confirmButtonColor: '#3085d6',
     cancelButtonColor: '#d33',
     confirmButtonText: 'Evet',
+    cancelButtonText: 'İptal Et'
+  })
+}
+
+
+export const askSwal = () => {
+  return MySwal.fire({
+    title: `Paket Yükseltmek İstiyor musunuz ?`,
+    text: `Bu Temayı Etkinleştirmek İçin Deluxe Pakete Sahip Olmalısınız!`,
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: 'Paket Yükselt',
     cancelButtonText: 'İptal Et'
   })
 }
