@@ -7,12 +7,13 @@ import { unAuthorized } from '../../redux/authentication'
 import axios from 'axios';
 import { handleSuccess } from '../../extension/basicalert'
 import { ErrorToast } from '../../extension/toast';
+import PricingCards from '../AccountSettings/PricingCards';
+import { askSwal } from '../../extension/basicalert';
 
 //Tema resimlerini import edip daha sonra diziye ekle.
 import Atlas from '../../assets/images/portrait/Atlas.png'
 import { Link } from 'react-router-dom';
-import { askSwal } from '../../extension/basicalert';
-import PricingCards from '../AccountSettings/PricingCards';
+
 const themes = [
     {
         name: 'athena',
@@ -27,8 +28,6 @@ const themes = [
         name: 'atlas',
         description: [
             'Aşağıya doğru açılır akordiyon tasarımlı tema',
-            " Sadece ana kategori tanımlanmalıdır alt kategoriler gözükmeyecektir",
-            " <strong>Ürün resimleri kare format olmalıdır.</strong> ",
             " Logo işletme adı olarak kullanılacaktır. "
         ],
         imageUrl: Atlas,
@@ -200,11 +199,11 @@ const index = () => {
                                         <li key={key} dangerouslySetInnerHTML={{ __html: item }} ></li>
                                     ))}
                                 </CardText>
-
+                              
                             </CardBody>
                             <CardFooter>
                                 <ButtonGroup className='w-100'>
-                                    {theme.package.includes(reduxUserPackage) ?
+                                    {theme.package.includes(reduxUserPackage) || reduxUserPackage === 'deluxe' ?
                                         <Button className='w-50' color='primary' onClick={() => { onClick(theme.name) }} >
                                             Aktif Et
                                         </Button>
