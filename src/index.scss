@@ -1,2 +1,7 @@
-@import '../node_modules/prismjs/themes/prism-tomorrow';
-@import './assets/scss/app.scss';
+@import "../node_modules/prismjs/themes/prism-tomorrow";
+.theme-image {
+    object-fit: cover;
+    max-height: 264px;
+    width: 100%;
+    object-position: 80% 80%;
+}

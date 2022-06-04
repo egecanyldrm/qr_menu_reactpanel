@@ -12,6 +12,8 @@ import { askSwal } from '../../extension/basicalert';
 
 //Tema resimlerini import edip daha sonra diziye ekle.
 import Atlas from '../../assets/images/portrait/Atlas.png'
+import Troy from '../../assets/images/portrait/Troy.png'
+import Athena from '../../assets/images/portrait/Athena.png'
 import { Link } from 'react-router-dom';
 
 const themes = [
@@ -21,7 +23,7 @@ const themes = [
             " Aşağıya doğru açılır akordiyon tasarımlı tema",
             " Ürünler Kare Format Olmalıdır."
         ],
-        imageUrl: Atlas,
+        imageUrl: Athena,
         package: ['special']
     },
     {
@@ -70,7 +72,7 @@ const themes = [
             "Aşağıya doğru açılır akordiyon tasarımlı tema",
             "Ürünler Kare Format Olmalıdır."
         ],
-        imageUrl: Atlas,
+        imageUrl: Troy,
         package: ['deluxe']
     }
 
@@ -190,7 +192,8 @@ const index = () => {
                                     Premium Konsep Tema
                                 </Badge>
                             }
-                            <CardImg className='shadow-sm text-capitalize' top src={theme.imageUrl} alt='Image Card' />
+                            
+                            <CardImg className='shadow-sm text-capitalize theme-image' top src={theme.imageUrl} alt='Image Card' />
                             <CardBody>
                                 <CardTitle className='text-capitalize' tag='h4'>{theme.name}</CardTitle>
 
@@ -199,7 +202,7 @@ const index = () => {
                                         <li key={key} dangerouslySetInnerHTML={{ __html: item }} ></li>
                                     ))}
                                 </CardText>
-                              
+
                             </CardBody>
                             <CardFooter>
                                 <ButtonGroup className='w-100'>
@@ -219,7 +222,7 @@ const index = () => {
 
                                     }
 
-                                    <Button className='ms-1 w-50' color='primary' outline>
+                                    <Button className='ms-1 w-50' color='primary' outline target='_blank' rel='noreferrer' href={process.env.REACT_APP_NEXT_FRONTEND + '/themes/' + theme.name}>
                                         Önizle
                                     </Button>
                                 </ButtonGroup>

@@ -1,17 +1,16 @@
 // ** Router Import
 import Router from './router/Router'
-import { isLogin } from './api/post'
+
 import { useDispatch, useSelector } from 'react-redux'
 import { useEffect } from 'react'
 import { checkLogin } from './redux/authentication'
 import axios from 'axios'
 import { handleBasicTitleAlert } from './extension/basicalert'
+import './index.scss'
+require('dotenv').config()
 const App = () => {
-
     const dispatch = useDispatch();
     const state = useSelector(state => state.auth);
-
-
 
     useEffect(() => {
 
@@ -21,7 +20,7 @@ const App = () => {
             dispatch(checkLogin(token))
         }
         //Axios Config
-        axios.defaults.baseURL = 'https://api.egecanyildirim.com';
+        axios.defaults.baseURL = process.env.REACT_APP_API_URL;
 
     }, [])
 

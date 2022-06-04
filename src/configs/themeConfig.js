@@ -3,7 +3,7 @@
 //Template config options
 const themeConfig = {
   app: {
-    appName: 'Apollon Soft',
+    appName: process.env.REACT_APP_COMPANY_NAME,
     appLogoImage: require('@src/assets/images/logo/logo.svg').default
   },
   layout: {

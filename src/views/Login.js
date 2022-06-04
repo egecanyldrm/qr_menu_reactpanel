@@ -8,8 +8,7 @@ import { logIn, logOut, userNotFound } from '../redux/authentication'
 import { useDispatch } from 'react-redux'
 import { ErrorToast } from '../extension/toast'
 import { toast } from 'react-toastify'
-
-import { postLogin } from '../api/post'
+import LoginImage from '../assets/images/pages/login_image.jpg'
 import axios from 'axios'
 const LoginCover = () => {
   const dispatch = useDispatch();
@@ -36,22 +35,16 @@ const LoginCover = () => {
 
   }
 
-
   const { skin } = useSkin();
-
-  const illustration = skin === 'dark' ? 'login-v2-dark.svg' : 'login-v2.svg',
-    source = require(`@src/assets/images/pages/${illustration}`).default
 
   return (
     <div className='auth-wrapper auth-cover'>
       <Row className='auth-inner m-0'>
         <Link className='brand-logo' to='/' onClick={e => e.preventDefault()}>
-          <h2 className='brand-text text-primary ms-1'>Dijital Menü</h2>
+          <h2 className='brand-text text-primary ms-1'>{process.env.REACT_APP_COMPANY_NAME}</h2>
         </Link>
-        <Col className='d-none d-lg-flex align-items-center p-5' lg='8' sm='12'>
-          <div className='w-100 d-lg-flex align-items-center justify-content-center px-5'>
-            <img className='img-fluid' src={source} alt='Login Cover' />
-          </div>
+        <Col className=' d-none d-lg-block p-0 m-0' lg='8' sm='12'>
+          <img className='img-fluid h-100' style={{ objectFit: 'cover' }} src={LoginImage} alt='Login Image' />
         </Col>
         <Col className='d-flex align-items-center auth-bg px-2 p-lg-5' lg='4' sm='12'>
           <Col className='px-xl-2 mx-auto' sm='8' md='6' lg='12'>
@@ -86,20 +79,7 @@ const LoginCover = () => {
                 Giriş Yap
               </Button>
             </Form>
-            <div className='divider my-2'>
-              <div className='divider-text'>Bizi Takip Et</div>
-            </div>
-            <div className='auth-footer-btn d-flex justify-content-center'>
-              <Button color='facebook'>
-                <Facebook size={14} />
-              </Button>
-              <Button color='twitter'>
-                <Twitter size={14} />
-              </Button>
-              <Button className='me-0' color='github'>
-                <GitHub size={14} />
-              </Button>
-            </div>
+           
           </Col>
         </Col>
       </Row>

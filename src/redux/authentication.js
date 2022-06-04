@@ -1,12 +1,12 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import axios from 'axios'
+require('dotenv').config()
 
 
 export const checkLogin = createAsyncThunk(
   'checkLogin',
   async (token) => {
-    const response = await axios.post('https://api.egecanyildirim.com/islogin',
-
+    const response = await axios.post(process.env.REACT_APP_API_URL + '/islogin',
       {
         token: token
       }
