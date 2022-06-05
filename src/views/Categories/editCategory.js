@@ -214,29 +214,7 @@ const PillFilled = () => {
                         </Label>
                         <Input value={trdescription} onChange={e => setTrDescription(e.target.value)} type='textarea' name='description' id='descriptionVertical' placeholder='Açıklama' />
                       </Col>
-                      <Col sm='12' className='mb-1'>
-                        <Label className='form-label'>Kategori</Label>
-                        <Select
-                          noOptionsMessage={({ inputValue: string }) => 'Kategori Bulunamadı...'}
-                          className='react-select'
-                          classNamePrefix='select'
-                          defaultValue={defaultCategory}
 
-                          name='clear'
-                          options={categories}
-                          isClearable
-                          singleValue
-                          placeholder='Kategori Seç'
-                          onChange={(e) => {
-                            if (e) {
-                              setRootCategory(e.value)
-                            } else {
-                              setRootCategory(null)
-                            }
-                          }
-                          }
-                        />
-                      </Col>
                     </Row>
                   </Form>
                   <FileUploaderRestrictions clearImage={setCompressedFile} handleCompressedUpload={handleCompressedUpload} />
@@ -300,3 +278,31 @@ const PillFilled = () => {
   }
 }
 export default PillFilled
+
+
+/* 
+
+  <Col sm='12' className='mb-1'>
+                        <Label className='form-label'>Kategori</Label>
+                        <Select
+                          noOptionsMessage={({ inputValue: string }) => 'Kategori Bulunamadı...'}
+                          className='react-select'
+                          classNamePrefix='select'
+                          defaultValue={defaultCategory}
+
+                          name='clear'
+                          options={categories}
+                          isClearable
+                          singleValue
+                          placeholder='Kategori Seç'
+                          onChange={(e) => {
+                            if (e) {
+                              setRootCategory(e.value)
+                            } else {
+                              setRootCategory(null)
+                            }
+                          }
+                          }
+                        />
+                      </Col>
+*/

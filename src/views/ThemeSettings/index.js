@@ -57,16 +57,6 @@ const themes = [
     }
     ,
     {
-        name: 'orion',
-        description: [
-            "Aşağıya doğru açılır akordiyon tasarımlı tema",
-            "Ürünler Kare Format Olmalıdır."
-        ],
-        imageUrl: Atlas,
-        package: ['deluxe']
-    }
-    ,
-    {
         name: 'troy',
         description: [
             "Aşağıya doğru açılır akordiyon tasarımlı tema",
@@ -79,7 +69,7 @@ const themes = [
 
 ];
 
-const getTheme = (themeName) => {
+const getTheme = (themeName, user) => {
     const theme = themes.find(theme => theme.name === themeName);
     return (
         <Row>
@@ -99,7 +89,7 @@ const getTheme = (themeName) => {
                                 Temayı Düzenle
                             </Link>
                         </div>
-                        <Button color='primary' block outline>
+                        <Button color='primary' block outline target='_blank' rel='noreferrer' href={process.env.REACT_APP_NEXT_FRONTEND + '/' + user.username}>
                             Önizle
                         </Button>
                     </CardBody>
@@ -107,8 +97,8 @@ const getTheme = (themeName) => {
                 </Card>
             </Col>
             <Col>
-                <Card llg='6' md='6' className='shadow-sm'>
-                    <CardImg className='shadow' top src={Atlas} alt='Card cap' />
+                <Card lg='6' md='6' className='shadow-sm' >
+                    <CardImg className='shadow' style={{ maxHeight: '30rem', objectFit: 'cover' }} top src={theme.imageUrl} alt='Card cap' />
                 </Card>
             </Col>
         </Row>
@@ -172,7 +162,7 @@ const index = () => {
                     <Card>
                         <CardBody>
                             <CardTitle tag='h4'>Aktif Tema</CardTitle>
-                            {getTheme(data.theme)}
+                            {getTheme(data.theme, user)}
                         </CardBody>
                     </Card>
                     :
@@ -189,10 +179,10 @@ const index = () => {
                         <Card className='me-2 flex-nowrap' style={{ minHeight: '40rem' }} >
                             {theme.package.includes('deluxe') &&
                                 <Badge color='success' className='badge-glow mb-1 position-absolute' style={{ right: 0 }}>
-                                    Premium Konsep Tema
+                                    Premium Konsept Tema
                                 </Badge>
                             }
-                            
+
                             <CardImg className='shadow-sm text-capitalize theme-image' top src={theme.imageUrl} alt='Image Card' />
                             <CardBody>
                                 <CardTitle className='text-capitalize' tag='h4'>{theme.name}</CardTitle>
