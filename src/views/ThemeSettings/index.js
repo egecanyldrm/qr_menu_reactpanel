@@ -65,6 +65,16 @@ const themes = [
         imageUrl: Troy,
         package: ['deluxe']
     }
+    ,
+    {
+        name: 'orion',
+        description: [
+            "Aşağıya doğru açılır akordiyon tasarımlı tema",
+            "Ürünler Kare Format Olmalıdır."
+        ],
+        imageUrl: Troy,
+        package: ['deluxe']
+    }
 
 
 ];
@@ -98,7 +108,7 @@ const getTheme = (themeName, user) => {
             </Col>
             <Col>
                 <Card lg='6' md='6' className='shadow-sm' >
-                    <CardImg className='shadow' style={{ maxHeight: '30rem', objectFit: 'cover' }} top src={theme.imageUrl} alt='Card cap' />
+                    <iframe ssrc={process.env.REACT_APP_NEXT_FRONTEND + '/'+user} frameborder="0"></iframe>
                 </Card>
             </Col>
         </Row>
@@ -176,14 +186,13 @@ const index = () => {
             <Row>
                 {themes.map((theme, key) => (
                     <Col lg='4' sm='12' key={key}>
-                        <Card className='me-2 flex-nowrap' style={{ minHeight: '40rem' }} >
+                        <Card className='me-2 flex-nowrap' style={{ minHeight: '10rem' }} >
                             {theme.package.includes('deluxe') &&
                                 <Badge color='success' className='badge-glow mb-1 position-absolute' style={{ right: 0 }}>
                                     Premium Konsept Tema
                                 </Badge>
                             }
 
-                            <CardImg className='shadow-sm text-capitalize theme-image' top src={theme.imageUrl} alt='Image Card' />
                             <CardBody>
                                 <CardTitle className='text-capitalize' tag='h4'>{theme.name}</CardTitle>
 
