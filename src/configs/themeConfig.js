@@ -4,7 +4,7 @@
 const themeConfig = {
   app: {
     appName: process.env.REACT_APP_COMPANY_NAME,
-    appLogoImage: require('@src/assets/images/logo/logo.svg').default
+    appLogoImage: require('@src/assets/images/logo/kreatifsiyah.png').default
   },
   layout: {
     isRTL: false,
