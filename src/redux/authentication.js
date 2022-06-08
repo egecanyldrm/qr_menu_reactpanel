@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import axios from 'axios'
+import ls from 'localstorage-slim';
 require('dotenv').config()
 
 
@@ -23,8 +24,8 @@ const authSlice = createSlice({
   },
   reducers: {
     logIn(state, action) {
-      localStorage.setItem('user', JSON.stringify(action.payload.user));
-      localStorage.setItem('token', action.payload.token);
+      ls.set('user', JSON.stringify(action.payload.user));
+      ls.set('token', action.payload.token);
       state.isLogin = true;
       state.user = action.payload.user;
       // console.log(JSON.parse(localStorage.getItem('user')))
@@ -33,8 +34,8 @@ const authSlice = createSlice({
       state.isLogin = false
       state.status = 'success'
       state.title = ''
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
+      ls.remove('token');
+      ls.remove('user');
       state.message = 'Oturumunuz Başarıyla Sonlanmıştır'
     },
     userNotFound(state, action) {
@@ -43,8 +44,8 @@ const authSlice = createSlice({
     },
     unAuthorized(state, action) {
       state.isLogin = false
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
+      ls.remove('token');
+      ls.remove('user');
       state.status = 'error'
       state.message = 'Oturum Süreniz Dolmuştur'
       state.title = 'Oops...'
@@ -55,12 +56,12 @@ const authSlice = createSlice({
     builder.addCase(checkLogin.pending, (state) => {
       // Add user to the state array
       state.isLogin = true
-      state.user = JSON.parse(localStorage.getItem('user'))
+      state.user = JSON.parse(ls.get('user'))
     });
     builder.addCase(checkLogin.rejected, (state) => {
       // Add user to the state array
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
+      ls.remove('token');
+      ls.remove('user');
       state.isLogin = false,
         state.status = 'error'
       state.message = 'Oturum süreniz Dolmuştur'

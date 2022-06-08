@@ -8,6 +8,11 @@ import axios from 'axios'
 import { handleBasicTitleAlert } from './extension/basicalert'
 import './index.scss'
 require('dotenv').config()
+//Local Storage package config
+import ls from 'localstorage-slim';
+ls.config.encrypt = true;
+
+
 const App = () => {
     const dispatch = useDispatch();
     const state = useSelector(state => state.auth);
@@ -15,7 +20,8 @@ const App = () => {
     useEffect(() => {
 
 
-        let token = localStorage.getItem('token')
+        let token = ls.get('token')
+        console.log(token)
         if (token) {
             dispatch(checkLogin(token))
         }
@@ -28,7 +34,7 @@ const App = () => {
         if (state.isLogin === false) {
             handleBasicTitleAlert(state.message, state.status, state.title)
         }
-        let access_token = localStorage.getItem('token')
+        let access_token = ls.get('token')
         axios.defaults.headers.common['Authorization'] = `Bearer ${access_token}`
         // axios.defaults.headers.common['authorization'] = ;
 

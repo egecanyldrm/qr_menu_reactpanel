@@ -10,20 +10,19 @@ import { unAuthorized } from '../../redux/authentication';
 import { useForm } from 'react-hook-form'
 import { useDispatch } from 'react-redux';
 // ** Reactstrap Imports
-import { Row, Col, Form, Card, Label, Button, CardBody, CardTitle, CardHeader, Alert, FormFeedback } from 'reactstrap'
+import { Row, Col, Form, Card, Label, Button, CardBody, CardTitle, CardHeader, Alert, FormFeedback, Spinner } from 'reactstrap'
 import { handleSuccess } from '../../extension/basicalert';
 import axios from 'axios';
 import { useHistory } from "react-router-dom";
-import { saveAs } from "file-saver";
 
 const AccountTabs = ({ userDetail }) => {
-  
+
   const { register, handleSubmit, formState: { errors } } = useForm();
   const [compressedFile, setCompressedFile] = useState(null);
   const [imageUrl, setImageUrl] = useState(null);
   const dispatch = useDispatch();
   const navigate = useHistory()
-
+  const [status, setStatus] = useState(true)
 
   const handleCompressedUpload = (file) => {
     const image = file;
@@ -50,6 +49,7 @@ const AccountTabs = ({ userDetail }) => {
   }
 
   const onSubmit = async (data) => {
+    setStatus(false)
     const formData = new FormData();
     if (compressedFile) {
       formData.append('image', compressedFile, compressedFile.name);
@@ -59,9 +59,9 @@ const AccountTabs = ({ userDetail }) => {
 
     try {
       await axios.post(`/admin/update-business-detail`, formData).catch(err => { throw err.response.status });
-
+      setStatus(true)
       handleSuccess({ title: 'İşlem Başarılı', timer: 1200, message: 'Güncelleme başarılı bir şekilde yapıldı.' });
-      
+
     } catch (err) {
       if (err === 404) {
         toast.error(<ErrorToast message={'Kayıt İşlemi Başarısız oldu'} />, { icon: false, hideProgressBar: true })
@@ -81,7 +81,7 @@ const AccountTabs = ({ userDetail }) => {
   useEffect(() => {
 
     if (compressedFile) {
-   
+
     }
   }, [compressedFile])
   return (
@@ -123,7 +123,7 @@ const AccountTabs = ({ userDetail }) => {
                   <div>
                     <img className='shadow-sm' alt="ImageName" src={userDetail.qrcode} style={{ height: 100, width: 100 }} />
 
-                    <a href={userDetail.qrcode}  className='btn btn-primary ms-4 '  download> İndir</a>
+                    <a href={userDetail.qrcode} className='btn btn-primary ms-4 ' download> İndir</a>
                   </div>
                 </div>
               </Row>
@@ -159,9 +159,17 @@ const AccountTabs = ({ userDetail }) => {
                 </Col>
 
                 <Col className='mt-2' sm='12'>
-                  <Button type='submit' className='me-1' color='primary'>
-                    Kaydet
-                  </Button>
+                  {status ?
+
+                    <Button type='submit' className='me-1' color='primary'>
+                      Kaydet
+                    </Button>
+                    :
+                    <Button color='primary'>
+                      <Spinner color='white' size='sm' />
+                      <span className='ms-50'>Yükleniyor...</span>
+                    </Button>
+                  }
                 </Col>
                 <Col className='mt-5'>
                   {errors.hasOwnProperty('name', 'companyName') &&

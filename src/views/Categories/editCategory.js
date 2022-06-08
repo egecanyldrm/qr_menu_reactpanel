@@ -6,7 +6,7 @@ import Select from 'react-select'
 import qs from 'qs';
 import { unAuthorized } from '../../redux/authentication';
 // ** Reactstrap Imports
-import { TabContent, TabPane, Nav, NavItem, NavLink, Card, CardBody, Form, Row, Col, Label, Input, Button, CardFooter } from 'reactstrap'
+import { TabContent, TabPane, Nav, NavItem, Spinner, NavLink, Card, CardBody, Form, Row, Col, Label, Input, Button, CardFooter } from 'reactstrap'
 import FileUploaderRestrictions from '../../components/FileUploaderRestrictions'
 import Compressor from 'compressorjs';
 import axios from 'axios';
@@ -22,6 +22,9 @@ const PillFilled = () => {
   const dispatch = useDispatch();
   const navigate = useHistory()
   const params = useParams()
+  const [status, setstatus] = useState(true)
+
+
   const [responseStatus, setResponseStatus] = useState();
   //Name States
   const [trname, setTrName] = useState('');
@@ -115,6 +118,7 @@ const PillFilled = () => {
     if ((imageStatus) || (trname && trdescription)) {
 
 
+      setstatus(false)
       const formData = new FormData();
       const json =
       {
@@ -134,6 +138,8 @@ const PillFilled = () => {
       try {
         // Send the compressed image file to server with XMLHttpRequest.
         await axios.post(`/admin/edit-category/${params.categoryid}`, formData).catch(err => { throw err.response.status })
+        setstatus(true)
+
         handleSuccess({ title: 'Kayıt Başarılı', timer: 1200, message: 'Kategori başarılı bir şekilde kayıt edildi.' });
         setTimeout(() => {
           clearStates();
@@ -142,6 +148,7 @@ const PillFilled = () => {
       } catch (err) {
         if (err === 404) {
           toast.error(<ErrorToast message={'Kayıt İşlemi Başarısız oldu'} />, { icon: false, hideProgressBar: true })
+          setstatus(true)
 
         } else if (err === 401) {
           dispatch(unAuthorized())
@@ -260,12 +267,21 @@ const PillFilled = () => {
             </CardBody>
             <CardFooter>
               <div className='d-flex'>
-                <Button className='me-1' color='primary' type='submit' onClick={(e) => {
-                  e.preventDefault();
-                  submitForm();
-                }}>
-                  Kaydet
-                </Button>
+
+                {status ?
+
+                  <Button className='me-1' color='primary' type='submit' onClick={(e) => {
+                    e.preventDefault();
+                    submitForm();
+                  }}>
+                    Kaydet
+                  </Button>
+                  :
+                  <Button color='primary'>
+                    <Spinner color='white' size='sm' />
+                    <span className='ms-50'>Yükleniyor...</span>
+                  </Button>
+                }
               </div>
             </CardFooter>
 

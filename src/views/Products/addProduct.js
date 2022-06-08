@@ -6,7 +6,7 @@ import Select from 'react-select'
 import qs from 'qs';
 import { unAuthorized } from '../../redux/authentication';
 // ** Reactstrap Imports
-import { TabContent, TabPane, Nav, NavItem, NavLink, Card, CardBody, Form, Row, Col, Label, Input, Button, CardFooter } from 'reactstrap'
+import { TabContent, TabPane, Nav, NavItem, NavLink, Card, CardBody, Form, Row, Col, Label, Spinner, Button, CardFooter } from 'reactstrap'
 import FileUploaderRestrictions from '../../components/FileUploaderRestrictions'
 import Compressor from 'compressorjs';
 import axios from 'axios';
@@ -28,7 +28,7 @@ const PillFilled = () => {
   const [rootcategory, setRootCategory] = useState(null);
 
   const state = useSelector(state => state.auth.user);
-
+  const [status, setstatus] = useState(true)
 
   const [compressedFile, setCompressedFile] = useState(null);
   const [imageStatus, setImageStatus] = useState(false);
@@ -42,7 +42,7 @@ const PillFilled = () => {
       width: 1200,
       height: 1200,
       success: (compressedResult) => {
-      
+
         setCompressedFile(compressedResult)
       }
     });
@@ -78,7 +78,7 @@ const PillFilled = () => {
 
   const onSubmit = async (data) => {
     if ((imageStatus && compressedFile)) {
-
+      setstatus(false)
       const formData = new FormData();
 
       const json = rootcategory ?
@@ -94,6 +94,8 @@ const PillFilled = () => {
       try {
         // Send the compressed image file to server with XMLHttpRequest.
         await axios.post('/admin/add-product', formData).catch(err => { throw err.response.status })
+        setstatus(true)
+
         handleSuccess({ title: 'Kayıt Başarılı', timer: 1200, message: 'Kategori başarılı bir şekilde kayıt edildi.' });
         setTimeout(() => {
           navigate.push('/products')
@@ -101,6 +103,7 @@ const PillFilled = () => {
       } catch (err) {
         if (err === 501) {
           toast.error(<ErrorToast message={'Kayıt İşlemi Başarısız oldu'} />, { icon: false, hideProgressBar: true })
+          setstatus(true)
         } else if (err === 401) {
           dispatch(unAuthorized())
         }
@@ -227,9 +230,17 @@ const PillFilled = () => {
           </CardBody>
           <CardFooter>
             <div className='d-flex'>
-              <Button className='me-1' color='primary' type='submit' >
-                Kaydet
-              </Button>
+              {status ?
+
+                <Button type='submit' className='me-1' color='primary'>
+                  Kaydet
+                </Button>
+                :
+                <Button color='primary'>
+                  <Spinner color='white' size='sm' />
+                  <span className='ms-50'>Yükleniyor...</span>
+                </Button>
+              }
             </div>
           </CardFooter>
         </form>
