@@ -21,7 +21,6 @@ const App = () => {
 
 
         let token = ls.get('token')
-        console.log(token)
         if (token) {
             dispatch(checkLogin(token))
         }
