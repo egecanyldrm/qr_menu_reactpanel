@@ -10,69 +10,61 @@ import { ErrorToast } from '../../extension/toast';
 import PricingCards from '../AccountSettings/PricingCards';
 import { askSwal } from '../../extension/basicalert';
 
-//Tema resimlerini import edip daha sonra diziye ekle.
-import Atlas from '../../assets/images/portrait/Atlas.png'
-import Troy from '../../assets/images/portrait/Troy.png'
-import Athena from '../../assets/images/portrait/Athena.png'
 import { Link } from 'react-router-dom';
 
 const themes = [
     {
         name: 'athena',
         description: [
-            " Aşağıya doğru açılır akordiyon tasarımlı tema",
-            " Ürünler Kare Format Olmalıdır."
+            " İşletme Logosu Kullanılır ",
+            " Ürünler resimsiz listelenir "
         ],
-        imageUrl: Athena,
         package: ['special']
     },
     {
         name: 'atlas',
         description: [
             'Aşağıya doğru açılır akordiyon tasarımlı tema',
-            " Logo işletme adı olarak kullanılacaktır. "
+            " İşletme adı logo olarak kullanılır. ",
+            "Ürünler resim ile listelenir"
         ],
-        imageUrl: Atlas,
         package: ['deluxe']
     },
 
     {
         name: 'capella',
         description: [
-            " Aşağıya doğru açılır akordiyon tasarımlı tema",
-            " Ürünler Kare Format Olmalıdır."
+            " İşletme Logosu Kullanılır ",
+            " Ürünler resimli listelenir "
+
         ],
-        imageUrl: Atlas,
         package: ['deluxe']
     }
     ,
     {
         name: 'aphrodite',
         description: [
-            "Aşağıya doğru açılır akordiyon tasarımlı tema",
-            "Ürünler Kare Format Olmalıdır."
+            " İşletme adı logo olarak kullanılır. ",
+            " Ürünler resimli listelenir "
         ],
-        imageUrl: Atlas,
         package: ['deluxe']
     }
     ,
     {
         name: 'troy',
         description: [
-            "Aşağıya doğru açılır akordiyon tasarımlı tema",
-            "Ürünler Kare Format Olmalıdır."
+            " İşletme adı logo olarak kullanılır. ",
+            " Ürünler resimsiz listelenir "
         ],
-        imageUrl: Troy,
         package: ['deluxe']
     }
     ,
     {
         name: 'orion',
         description: [
-            "Aşağıya doğru açılır akordiyon tasarımlı tema",
-            "Ürünler Kare Format Olmalıdır."
+            " İşletme adı logo olarak kullanılır. ",
+            " Ürünler resimli listelenir "
         ],
-        imageUrl: Troy,
         package: ['deluxe']
     }
 
@@ -83,8 +75,8 @@ const getTheme = (themeName, user) => {
     const theme = themes.find(theme => theme.name === themeName);
     return (
         <Row>
-            <Col>
-                <Card lg='6' md='6' >
+            <Col lg='6' md='6'>
+                <Card  >
                     <CardBody>
                         <CardTitle className='text-capitalize' tag='h4'>   {theme.name}</CardTitle>
                         <CardText tag='div'>
@@ -106,9 +98,9 @@ const getTheme = (themeName, user) => {
 
                 </Card>
             </Col>
-            <Col>
-                <Card lg='6' md='6' className='shadow-sm' >
-                    <iframe ssrc={process.env.REACT_APP_NEXT_FRONTEND + '/'+user} frameborder="0"></iframe>
+            <Col lg='6' md='6' className='shadow' >
+                <Card  >
+                    <iframe src={process.env.REACT_APP_NEXT_FRONTEND + '/' + user.username} style={{ height: '24rem' }} frameBorder="0"></iframe>
                 </Card>
             </Col>
         </Row>
@@ -186,7 +178,7 @@ const index = () => {
             <Row>
                 {themes.map((theme, key) => (
                     <Col lg='4' sm='12' key={key}>
-                        <Card className='me-2 flex-nowrap' style={{ minHeight: '10rem' }} >
+                        <Card className='me-2 flex-nowrap' style={{ height: '20rem' }} >
                             {theme.package.includes('deluxe') &&
                                 <Badge color='success' className='badge-glow mb-1 position-absolute' style={{ right: 0 }}>
                                     Premium Konsept Tema
