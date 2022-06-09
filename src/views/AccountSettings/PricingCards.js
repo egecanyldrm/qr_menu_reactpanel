@@ -75,7 +75,7 @@ const PricingCards = (props) => {
             </div>
 
             <h3>Deluxe  Paket </h3>
-            <CardText>Küçük İşletmeler için</CardText>
+            <CardText>Büyük İşletmeler için</CardText>
             <div className='annual-plan'>
               <div className='plan-price mt-2'>
                 <sup className='font-medium-1 fw-bold text-primary me-25'>TL</sup>
@@ -100,9 +100,6 @@ const PricingCards = (props) => {
               </ListGroupItem>
               <ListGroupItem tag='li'>
                 Premium Konsept Temalar
-              </ListGroupItem>
-              <ListGroupItem tag='li'>
-                Otomatik Dil Algılama
               </ListGroupItem>
               <ListGroupItem tag='li'>
                 İngilizce Ve Rusça  Dil Seçeneği
