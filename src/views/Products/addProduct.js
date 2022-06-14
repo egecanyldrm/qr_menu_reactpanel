@@ -205,7 +205,7 @@ const PillFilled = () => {
               <TabPane tabId='2'>
                 <Row>
                   <Col sm='12' className='mb-1'>
-                    <Label className='form-label' for='nameVertical'>Kategori Adı</Label>
+                    <Label className='form-label' for='nameVertical'>Ürün Adı</Label>
                     <input className='form-control' placeholder='Ürün Adı' {...register("en.name", { required: false })} />
                   </Col>
                   <Col sm='12' className='mb-1'>
@@ -217,12 +217,12 @@ const PillFilled = () => {
               <TabPane tabId='3'>
                 <Row>
                   <Col sm='12' className='mb-1'>
-                    <Label className='form-label' for='nameVertical'>Kategori Adı</Label>
+                    <Label className='form-label' for='nameVertical'>Ürün Adı</Label>
                     <input className='form-control' placeholder='Ürün Adı' {...register("ru.name", { required: false })} />
                   </Col>
                   <Col sm='12' className='mb-1'>
                     <Label className='form-label' for='descriptionVertical'>Açıklama</Label>
-                    <input className='form-control' placeholder='Ürün Adı' {...register("ru.description", { required: false })} />
+                    <input className='form-control' placeholder='Açıklama' {...register("ru.description", { required: false })} />
                   </Col>
                 </Row>
               </TabPane>
