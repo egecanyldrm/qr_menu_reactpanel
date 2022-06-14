@@ -19,8 +19,8 @@ const columns = [
     sortable: true
   },
   {
-    name: 'Açıklama',
-    selector: row => row.description
+    name: '',
+    selector: row => row.space
   },
   {
     name: '',
