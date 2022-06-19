@@ -98,16 +98,12 @@ const PillFilled = () => {
       setstatus(false)
 
       const formData = new FormData();
-      const json = rootcategory ?
-        {
-          ...data,
-          categoryid: rootcategory
-        }
-        : data;
+      if (rootcategory) data.categoryid = rootcategory
       // Eğer resim varsa form datanın içine dahil ediliyor 
-      if (compressedFile && imageStatus) formData.append('image', compressedFile, compressedFile.name);
 
-      formData.set('product', qs.stringify(json));
+      if (compressedFile && imageStatus && state.package === 'deluxe') formData.append('image', compressedFile, compressedFile.name);
+
+      formData.set('product', qs.stringify(data));
       try {
         await axios.post(`/admin/edit-product/${params.productid}`, formData).catch(err => { throw err.response.status })
         setstatus(true)
@@ -124,7 +120,7 @@ const PillFilled = () => {
         }
       }
     } else {
-      toast.error(<ErrorToast message={'Lütfen Zorunlu Alanları Doldurun  Ürün Adı, Açıklama, Fiyat, Kategori '} />, { icon: false, hideProgressBar: true })
+      toast.error(<ErrorToast message={'Lütfen Zorunlu Alanları Doldurun  Ürün Adı, Açıklama, Fiyat'} />, { icon: false, hideProgressBar: true })
     }
   }
   {
@@ -140,19 +136,22 @@ const PillFilled = () => {
             }}>
               <CardBody>
                 <Nav pills fill>
-                  <NavItem>
-                    <NavLink
-                      active={active === '1'}
-                      style={state.language === false ? { maxWidth: '25%' } : {}}
+                  {state.package === 'deluxe' &&
 
-                      onClick={() => {
-                        toggle('1')
-                      }}
-                    >
-                      TR
-                    </NavLink>
+                    <NavItem>
+                      <NavLink
+                        active={active === '1'}
+                        style={state.language === false ? { maxWidth: '25%' } : {}}
 
-                  </NavItem>
+                        onClick={() => {
+                          toggle('1')
+                        }}
+                      >
+                        TR
+                      </NavLink>
+
+                    </NavItem>
+                  }
                   {state.language === true &&
                     <NavItem>
                       <NavLink
@@ -217,7 +216,11 @@ const PillFilled = () => {
                         />
                       </Col>
                     </Row>
-                    <FileUploaderRestrictions clearImage={setCompressedFile} handleCompressedUpload={handleCompressedUpload} />
+                    {state.package === 'deluxe' &&
+                      <FileUploaderRestrictions clearImage={setCompressedFile} handleCompressedUpload={handleCompressedUpload} />
+                    }
+
+
                   </TabPane>
                   <TabPane tabId='2'>
                     <Row>

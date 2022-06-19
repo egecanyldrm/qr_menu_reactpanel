@@ -30,6 +30,8 @@ const PillFilled = () => {
   const state = useSelector(state => state.auth.user);
   const [status, setstatus] = useState(true)
 
+
+
   const [compressedFile, setCompressedFile] = useState(null);
   const [imageStatus, setImageStatus] = useState(false);
   const [categories, setCategories] = useState([]);
@@ -77,40 +79,36 @@ const PillFilled = () => {
 
 
   const onSubmit = async (data) => {
-    if ((imageStatus && compressedFile)) {
-      setstatus(false)
-      const formData = new FormData();
+    setstatus(false)
+    const formData = new FormData();
+    const json = rootcategory ?
+      {
+        ...data,
+        categoryid: rootcategory
+      } :
+      data;
 
-      const json = rootcategory ?
-        {
-          ...data,
-          categoryid: rootcategory
-        } :
-        data;
-      // The third parameter is required for server
+    if (state.package === 'deluxe' && imageStatus && compressedFile) {
       formData.append('image', compressedFile, compressedFile.name);
-      formData.set('product', qs.stringify(json));
+    }
+    formData.set('product', qs.stringify(json));
 
-      try {
-        // Send the compressed image file to server with XMLHttpRequest.
-        await axios.post('/admin/add-product', formData).catch(err => { throw err.response.status })
+    try {
+      // Send the compressed image file to server with XMLHttpRequest.
+      await axios.post('/admin/add-product', formData).catch(err => { throw err.response.status })
+      setstatus(true)
+
+      handleSuccess({ title: 'Kayıt Başarılı', timer: 1200, message: 'Kategori başarılı bir şekilde kayıt edildi.' });
+      setTimeout(() => {
+        navigate.push('/products')
+      }, 1200)
+    } catch (err) {
+      if (err === 501) {
+        toast.error(<ErrorToast message={'Kayıt İşlemi Başarısız oldu'} />, { icon: false, hideProgressBar: true })
         setstatus(true)
-
-        handleSuccess({ title: 'Kayıt Başarılı', timer: 1200, message: 'Kategori başarılı bir şekilde kayıt edildi.' });
-        setTimeout(() => {
-          navigate.push('/products')
-        }, 1200)
-      } catch (err) {
-        if (err === 501) {
-          toast.error(<ErrorToast message={'Kayıt İşlemi Başarısız oldu'} />, { icon: false, hideProgressBar: true })
-          setstatus(true)
-        } else if (err === 401) {
-          dispatch(unAuthorized())
-        }
+      } else if (err === 401) {
+        dispatch(unAuthorized())
       }
-
-    } else if (!compressedFile) {
-      toast.error(<ErrorToast message={'Lütfen Resim Yükleyiniz'} />, { icon: false, hideProgressBar: true })
     }
   }
 
@@ -123,19 +121,23 @@ const PillFilled = () => {
         }}>
           <CardBody>
             <Nav pills fill>
-              <NavItem>
-                <NavLink
-                  active={active === '1'}
-                  style={state.language === false ? { maxWidth: '25%' } : {}}
+              {state.package === 'deluxe' &&
 
-                  onClick={() => {
-                    toggle('1')
-                  }}
-                >
-                  TR
-                </NavLink>
+                <NavItem>
+                  <NavLink
+                    active={active === '1'}
+                    style={state.language === false ? { maxWidth: '25%' } : {}}
 
-              </NavItem>
+                    onClick={() => {
+                      toggle('1')
+                    }}
+                  >
+                    TR
+                  </NavLink>
+
+                </NavItem>
+              }
+
               {state.language === true &&
                 <NavItem>
                   <NavLink
@@ -200,7 +202,9 @@ const PillFilled = () => {
                     />
                   </Col>
                 </Row>
-                <FileUploaderRestrictions clearImage={setCompressedFile} handleCompressedUpload={handleCompressedUpload} />
+                {state.package === 'deluxe' &&
+                  <FileUploaderRestrictions clearImage={setCompressedFile} handleCompressedUpload={handleCompressedUpload} />
+                }
               </TabPane>
               <TabPane tabId='2'>
                 <Row>

@@ -121,18 +121,21 @@ const PillFilled = () => {
 
           <CardBody>
             <Nav pills fill>
-              <NavItem>
-                <NavLink
-                  active={active === '1'}
-                  style={state.language === false ? { maxWidth: '25%' } : {}}
-                  onClick={() => {
-                    toggle('1')
-                  }}
-                >
-                  TR
-                </NavLink>
+              {state.package === 'deluxe' &&
 
-              </NavItem>
+                <NavItem>
+                  <NavLink
+                    active={active === '1'}
+                    style={state.language === false ? { maxWidth: '25%' } : {}}
+                    onClick={() => {
+                      toggle('1')
+                    }}
+                  >
+                    TR
+                  </NavLink>
+                </NavItem>
+              }
+
               {state.language === true &&
                 <NavItem>
                   <NavLink
