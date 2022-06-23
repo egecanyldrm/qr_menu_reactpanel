@@ -40,8 +40,6 @@ const AccountTabs = ({ userDetail }) => {
   };
 
 
-
-
   const checkError = () => {
     if (errors.hasOwnProperty('contact') || errors.hasOwnProperty('name') || errors.hasOwnProperty('email') || errors.hasOwnProperty('companyName')) {
       toast.error(<ErrorToast message={'Lütfen Zorunlu Alanları Doldurunuz'} />, { icon: false, hideProgressBar: true })

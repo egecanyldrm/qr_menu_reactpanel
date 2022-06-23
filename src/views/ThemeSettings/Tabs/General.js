@@ -79,7 +79,7 @@ const General = ({ general }) => {
     const onSubmit = async (data) => {
         try {
             await axios.post('/admin/update-theme-settings/general', data).catch(err => { throw err.response.status })
-            handleSuccess({ title: 'Kayıt Başarılı', timer: 1200, message: 'Tema başarılı bir şekilde değiştirildi.' });
+            handleSuccess({ title: 'Kayıt Başarılı', timer: 1000, message: 'Tema başarılı bir şekilde değiştirildi.' });
         } catch (err) {
             if (err === 501) {
                 toast.error(<ErrorToast message={'İşlem Başarısız oldu.'} />, { icon: false, hideProgressBar: true })
@@ -97,11 +97,10 @@ const General = ({ general }) => {
                     })
                 }}>
                     <CardBody>
+                        <CardTitle className='mt-2' tag='h5'> Dil  Ayarları</CardTitle>
                         <Row>
-                            <CardTitle className='mt-2' tag='h5'>Dil Ayarları</CardTitle>
-
                             <Col >
-                                <label className='fw-bold'>İngilizce Dil Desteği :</label>
+                                <label className='fw-bold'>İngilizce     :</label>
                                 {state === 'deluxe' ?
                                     <Controller
                                         name="english"
@@ -128,7 +127,7 @@ const General = ({ general }) => {
                                 }
                             </Col>
                             <Col>
-                                <label className='fw-bold'>Rusça Dil Desteği :</label>
+                                <label className='fw-bold'>Rusça     :</label>
                                 {state === 'deluxe' ?
                                     <Controller
                                         name="russian"
@@ -154,10 +153,90 @@ const General = ({ general }) => {
                                     />
                                 }
                             </Col>
+                            <Col>
+                                <label className='fw-bold'>Fransızca     :</label>
+                                {state === 'deluxe' ?
+                                    <Controller
+                                        name="french"
+                                        control={control}
+                                        render={({ field }) => (
+                                            <IOSSwitch sx={{ m: 1 }}
+                                                onChange={(e) => field.onChange(e.target.checked)}
+                                                checked={field.value}
+                                            />
+                                        )}
+                                    />
+                                    :
+                                    <Controller
+                                        name="french"
+                                        control={control}
+                                        render={({ field }) => (
+                                            <IOSSwitch sx={{ m: 1 }}
+                                                disabled
+                                                onChange={(e) => field.onChange(e.target.checked)}
+                                                checked={field.value}
+                                            />
+                                        )}
+                                    />
+                                }
+                            </Col>
+                            <Col>
+                                <label className='fw-bold'>Almanca     :</label>
+                                {state === 'deluxe' ?
+                                    <Controller
+                                        name="germany"
+                                        control={control}
+                                        render={({ field }) => (
+                                            <IOSSwitch sx={{ m: 1 }}
+                                                onChange={(e) => field.onChange(e.target.checked)}
+                                                checked={field.value}
+                                            />
+                                        )}
+                                    />
+                                    :
+                                    <Controller
+                                        name="germany"
+                                        control={control}
+                                        render={({ field }) => (
+                                            <IOSSwitch sx={{ m: 1 }}
+                                                disabled
+                                                onChange={(e) => field.onChange(e.target.checked)}
+                                                checked={field.value}
+                                            />
+                                        )}
+                                    />
+                                }
+                            </Col>
+                            <Col>
+                                <label className='fw-bold'>Arapça     :</label>
+                                {state === 'deluxe' ?
+                                    <Controller
+                                        name="arab"
+                                        control={control}
+                                        render={({ field }) => (
+                                            <IOSSwitch sx={{ m: 1 }}
+                                                onChange={(e) => field.onChange(e.target.checked)}
+                                                checked={field.value}
+                                            />
+                                        )}
+                                    />
+                                    :
+                                    <Controller
+                                        name="arab"
+                                        control={control}
+                                        render={({ field }) => (
+                                            <IOSSwitch sx={{ m: 1 }}
+                                                disabled
+                                                onChange={(e) => field.onChange(e.target.checked)}
+                                                checked={field.value}
+                                            />
+                                        )}
+                                    />
+                                }
+                            </Col>
                         </Row>
                         <Row>
                             <CardTitle className='mt-2' tag='h5'>Footer  Ayarları</CardTitle>
-
                             <Col>
                                 <label className='fw-bold'>Sosyal Medya :</label>
                                 <Controller

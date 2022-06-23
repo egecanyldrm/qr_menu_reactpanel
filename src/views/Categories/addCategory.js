@@ -76,6 +76,7 @@ const PillFilled = () => {
 
 
   const onSubmit = async (data) => {
+
     if ((imageStatus && compressedFile) && (data.tr.description && data.tr.name)) {
       setstatus(false)
 
@@ -131,7 +132,7 @@ const PillFilled = () => {
                       toggle('1')
                     }}
                   >
-                    TR
+                    Türkçe
                   </NavLink>
                 </NavItem>
               }
@@ -144,7 +145,7 @@ const PillFilled = () => {
                       toggle('2')
                     }}
                   >
-                    EN
+                    İngilizce
                   </NavLink>
                 </NavItem>
               }
@@ -157,7 +158,49 @@ const PillFilled = () => {
                       toggle('3')
                     }}
                   >
-                    RU
+                    Rusça
+                  </NavLink>
+                </NavItem>
+              }
+              {
+                state.language === true &&
+
+                <NavItem>
+                  <NavLink
+                    active={active === '4'}
+                    onClick={() => {
+                      toggle('4')
+                    }}
+                  >
+                    Fransızca
+                  </NavLink>
+                </NavItem>
+              }
+              {
+                state.language === true &&
+
+                <NavItem>
+                  <NavLink
+                    active={active === '5'}
+                    onClick={() => {
+                      toggle('5')
+                    }}
+                  >
+                    Arapça
+                  </NavLink>
+                </NavItem>
+              }
+              {
+                state.language === true &&
+
+                <NavItem>
+                  <NavLink
+                    active={active === '6'}
+                    onClick={() => {
+                      toggle('6')
+                    }}
+                  >
+                    Almanca
                   </NavLink>
                 </NavItem>
               }
@@ -205,6 +248,42 @@ const PillFilled = () => {
                   <Col sm='12' className='mb-1'>
                     <Label className='form-label' for='descriptionVertical'> Açıklama</Label>
                     <input className='form-control'  {...register("ru.description", { required: false })} />
+                  </Col>
+                </Row>
+              </TabPane>
+              <TabPane tabId='4'>
+                <Row>
+                  <Col sm='12' className='mb-1'>
+                    <Label className='form-label' for='nameVertical'> Kategori Adı</Label>
+                    <input className='form-control'  {...register("fr.name", { required: false })} />
+                  </Col>
+                  <Col sm='12' className='mb-1'>
+                    <Label className='form-label' for='descriptionVertical'> Açıklama</Label>
+                    <input className='form-control'  {...register("fr.description", { required: false })} />
+                  </Col>
+                </Row>
+              </TabPane>
+              <TabPane tabId='5'>
+                <Row>
+                  <Col sm='12' className='mb-1'>
+                    <Label className='form-label' for='nameVertical'> Kategori Adı</Label>
+                    <input className='form-control'  {...register("ar.name", { required: false })} />
+                  </Col>
+                  <Col sm='12' className='mb-1'>
+                    <Label className='form-label' for='descriptionVertical'> Açıklama</Label>
+                    <input className='form-control'  {...register("ar.description", { required: false })} />
+                  </Col>
+                </Row>
+              </TabPane>
+              <TabPane tabId='6'>
+                <Row>
+                  <Col sm='12' className='mb-1'>
+                    <Label className='form-label' for='nameVertical'> Kategori Adı</Label>
+                    <input className='form-control'  {...register("de.name", { required: false })} />
+                  </Col>
+                  <Col sm='12' className='mb-1'>
+                    <Label className='form-label' for='descriptionVertical'> Açıklama</Label>
+                    <input className='form-control'  {...register("de.description", { required: false })} />
                   </Col>
                 </Row>
               </TabPane>

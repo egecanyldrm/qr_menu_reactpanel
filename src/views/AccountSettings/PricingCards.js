@@ -102,10 +102,7 @@ const PricingCards = (props) => {
                 Premium Konsept Temalar
               </ListGroupItem>
               <ListGroupItem tag='li'>
-                İngilizce Ve Rusça  Dil Seçeneği
-              </ListGroupItem>
-              <ListGroupItem tag='li'>
-                Masadan sipariş verme {'( Yakında )'}
+                İngilizce, Rusça, Almanca, Fransızca ve Arapça  Dil Seçeneği
               </ListGroupItem>
             </ListGroup>
             <Button

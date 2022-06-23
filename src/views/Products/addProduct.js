@@ -21,16 +21,10 @@ const PillFilled = () => {
   const navigate = useHistory()
   const { register, handleSubmit, formState: { errors } } = useForm();
 
-
-  //Name States
-
-  // Root Category States 
   const [rootcategory, setRootCategory] = useState(null);
 
   const state = useSelector(state => state.auth.user);
   const [status, setstatus] = useState(true)
-
-
 
   const [compressedFile, setCompressedFile] = useState(null);
   const [imageStatus, setImageStatus] = useState(false);
@@ -44,7 +38,6 @@ const PillFilled = () => {
       width: 1200,
       height: 1200,
       success: (compressedResult) => {
-
         setCompressedFile(compressedResult)
       }
     });
@@ -97,7 +90,6 @@ const PillFilled = () => {
       // Send the compressed image file to server with XMLHttpRequest.
       await axios.post('/admin/add-product', formData).catch(err => { throw err.response.status })
       setstatus(true)
-
       handleSuccess({ title: 'Kayıt Başarılı', timer: 1200, message: 'Kategori başarılı bir şekilde kayıt edildi.' });
       setTimeout(() => {
         navigate.push('/products')
@@ -127,14 +119,12 @@ const PillFilled = () => {
                   <NavLink
                     active={active === '1'}
                     style={state.language === false ? { maxWidth: '25%' } : {}}
-
                     onClick={() => {
                       toggle('1')
                     }}
                   >
-                    TR
+                    Türkçe
                   </NavLink>
-
                 </NavItem>
               }
 
@@ -146,7 +136,7 @@ const PillFilled = () => {
                       toggle('2')
                     }}
                   >
-                    EN
+                    İngilizce
                   </NavLink>
                 </NavItem>
               }
@@ -159,7 +149,49 @@ const PillFilled = () => {
                       toggle('3')
                     }}
                   >
-                    RU
+                    Rusça
+                  </NavLink>
+                </NavItem>
+              }
+              {
+                state.language === true &&
+
+                <NavItem>
+                  <NavLink
+                    active={active === '4'}
+                    onClick={() => {
+                      toggle('4')
+                    }}
+                  >
+                    Fransızca
+                  </NavLink>
+                </NavItem>
+              }
+              {
+                state.language === true &&
+
+                <NavItem>
+                  <NavLink
+                    active={active === '5'}
+                    onClick={() => {
+                      toggle('5')
+                    }}
+                  >
+                    Arapça
+                  </NavLink>
+                </NavItem>
+              }
+              {
+                state.language === true &&
+
+                <NavItem>
+                  <NavLink
+                    active={active === '6'}
+                    onClick={() => {
+                      toggle('6')
+                    }}
+                  >
+                    Almanca
                   </NavLink>
                 </NavItem>
               }
@@ -230,6 +262,42 @@ const PillFilled = () => {
                   </Col>
                 </Row>
               </TabPane>
+              <TabPane tabId='4'>
+                <Row>
+                  <Col sm='12' className='mb-1'>
+                    <Label className='form-label' for='nameVertical'>Ürün Adı</Label>
+                    <input className='form-control' placeholder='Ürün Adı' {...register("fr.name", { required: false })} />
+                  </Col>
+                  <Col sm='12' className='mb-1'>
+                    <Label className='form-label' for='descriptionVertical'>Açıklama</Label>
+                    <input className='form-control' placeholder='Açıklama' {...register("fr.description", { required: false })} />
+                  </Col>
+                </Row>
+              </TabPane>
+              <TabPane tabId='5'>
+                <Row>
+                  <Col sm='12' className='mb-1'>
+                    <Label className='form-label' for='nameVertical'>Ürün Adı</Label>
+                    <input className='form-control' placeholder='Ürün Adı' {...register("ar.name", { required: false })} />
+                  </Col>
+                  <Col sm='12' className='mb-1'>
+                    <Label className='form-label' for='descriptionVertical'>Açıklama</Label>
+                    <input className='form-control' placeholder='Açıklama' {...register("ar.description", { required: false })} />
+                  </Col>
+                </Row>
+              </TabPane>
+              <TabPane tabId='6'>
+                <Row>
+                  <Col sm='12' className='mb-1'>
+                    <Label className='form-label' for='nameVertical'>Ürün Adı</Label>
+                    <input className='form-control' placeholder='Ürün Adı' {...register("de.name", { required: false })} />
+                  </Col>
+                  <Col sm='12' className='mb-1'>
+                    <Label className='form-label' for='descriptionVertical'>Açıklama</Label>
+                    <input className='form-control' placeholder='Açıklama' {...register("de.description", { required: false })} />
+                  </Col>
+                </Row>
+              </TabPane>
             </TabContent>
           </CardBody>
           <CardFooter>
@@ -248,9 +316,7 @@ const PillFilled = () => {
             </div>
           </CardFooter>
         </form>
-
       </Card>
-
     </Fragment>
   )
 }
