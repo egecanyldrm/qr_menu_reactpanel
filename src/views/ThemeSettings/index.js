@@ -212,10 +212,6 @@ const index = () => {
                                         </React.Fragment>
 
                                     }
-
-                                    <Button className='ms-1 w-50' color='primary' outline target='_blank' rel='noreferrer' href={process.env.REACT_APP_NEXT_FRONTEND + '/themes/' + theme.name}>
-                                        Önizle
-                                    </Button>
                                 </ButtonGroup>
                             </CardFooter>
                         </Card>

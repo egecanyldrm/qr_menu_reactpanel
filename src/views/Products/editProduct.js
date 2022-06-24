@@ -93,7 +93,6 @@ const PillFilled = () => {
   }
 
   const onSubmit = async (data) => {
-    console.log(data)
     if ((imageStatus) || data) {
       setstatus(false)
       const formData = new FormData();

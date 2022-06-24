@@ -56,7 +56,6 @@ const PillFilled = () => {
       setResponseStatus(false);
       const { data } = await axios.post('/admin/get-category', { categoryId: params.categoryid }).catch(err => { throw err.response.status });
       setData(data)
-      console.log(data)
       setResponseStatus(true);
     } catch (error) {
       if (error === 404) {
@@ -79,7 +78,6 @@ const PillFilled = () => {
 
 
   const submitForm = async (data) => {
-    console.log(data)
     if ((imageStatus) || (data.tr.name && data.tr.description)) {
       setstatus(false)
       const formData = new FormData();

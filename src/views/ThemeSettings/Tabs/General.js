@@ -235,6 +235,35 @@ const General = ({ general }) => {
                                 }
                             </Col>
                         </Row>
+                        <Row className='mt-2'>
+                            <Col>
+                                <label className='fw-bold'>Otomatik Dil Algılama </label>
+                                {state === 'deluxe' ?
+                                    <Controller
+                                        name="autoLocaleDetection"
+                                        control={control}
+                                        render={({ field }) => (
+                                            <IOSSwitch sx={{ m: 1 }}
+                                                onChange={(e) => field.onChange(e.target.checked)}
+                                                checked={field.value}
+                                            />
+                                        )}
+                                    />
+                                    :
+                                    <Controller
+                                        name="autoLocaleDetection"
+                                        control={control}
+                                        render={({ field }) => (
+                                            <IOSSwitch sx={{ m: 1 }}
+                                                disabled
+                                                onChange={(e) => field.onChange(e.target.checked)}
+                                                checked={field.value}
+                                            />
+                                        )}
+                                    />
+                                }
+                            </Col>
+                        </Row>
                         <Row>
                             <CardTitle className='mt-2' tag='h5'>Footer  Ayarları</CardTitle>
                             <Col>
