@@ -102,6 +102,9 @@ const PricingCards = (props) => {
                 Premium Konsept Temalar
               </ListGroupItem>
               <ListGroupItem tag='li'>
+               Otomatik Dil Algıma 
+              </ListGroupItem>
+              <ListGroupItem tag='li'>
                 İngilizce, Rusça, Almanca, Fransızca ve Arapça  Dil Seçeneği
               </ListGroupItem>
             </ListGroup>
