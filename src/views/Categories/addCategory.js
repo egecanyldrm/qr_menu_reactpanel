@@ -77,7 +77,7 @@ const PillFilled = () => {
 
   const onSubmit = async (data) => {
 
-    if ((imageStatus && compressedFile) && (data.tr.description && data.tr.name)) {
+    if ((imageStatus && compressedFile) && ( data.tr.name)) {
       setstatus(false)
 
       const formData = new FormData();
@@ -214,12 +214,7 @@ const PillFilled = () => {
                     </Label>
                     <input className='form-control' placeholder='Kategori Adı'  {...register("tr.name", { required: true })} />
                   </Col>
-                  <Col sm='12' className='mb-1'>
-                    <Label className='form-label' for='descriptionVertical'>
-                      Açıklama
-                    </Label>
-                    <input className='form-control' placeholder='Açıklama' {...register("tr.description", { required: true })} />
-                  </Col>
+                 
 
                 </Row>
                 <FileUploaderRestrictions clearImage={setCompressedFile} handleCompressedUpload={handleCompressedUpload} />
@@ -231,12 +226,7 @@ const PillFilled = () => {
                     <Label className='form-label' for='nameVertical'>   Kategori Adı  </Label>
                     <input className='form-control'  {...register("en.name")} />
                   </Col>
-                  <Col sm='12' className='mb-1'>
-                    <Label className='form-label' for='descriptionVertical'>
-                      Açıklama
-                    </Label>
-                    <input className='form-control'  {...register("en.description")} />
-                  </Col>
+                 
                 </Row>
               </TabPane>
               <TabPane tabId='3'>
@@ -245,10 +235,7 @@ const PillFilled = () => {
                     <Label className='form-label' for='nameVertical'> Kategori Adı</Label>
                     <input className='form-control'  {...register("ru.name", { required: false })} />
                   </Col>
-                  <Col sm='12' className='mb-1'>
-                    <Label className='form-label' for='descriptionVertical'> Açıklama</Label>
-                    <input className='form-control'  {...register("ru.description", { required: false })} />
-                  </Col>
+               
                 </Row>
               </TabPane>
               <TabPane tabId='4'>
@@ -257,10 +244,7 @@ const PillFilled = () => {
                     <Label className='form-label' for='nameVertical'> Kategori Adı</Label>
                     <input className='form-control'  {...register("fr.name", { required: false })} />
                   </Col>
-                  <Col sm='12' className='mb-1'>
-                    <Label className='form-label' for='descriptionVertical'> Açıklama</Label>
-                    <input className='form-control'  {...register("fr.description", { required: false })} />
-                  </Col>
+               
                 </Row>
               </TabPane>
               <TabPane tabId='5'>
@@ -269,10 +253,7 @@ const PillFilled = () => {
                     <Label className='form-label' for='nameVertical'> Kategori Adı</Label>
                     <input className='form-control'  {...register("ar.name", { required: false })} />
                   </Col>
-                  <Col sm='12' className='mb-1'>
-                    <Label className='form-label' for='descriptionVertical'> Açıklama</Label>
-                    <input className='form-control'  {...register("ar.description", { required: false })} />
-                  </Col>
+                 
                 </Row>
               </TabPane>
               <TabPane tabId='6'>
@@ -281,10 +262,7 @@ const PillFilled = () => {
                     <Label className='form-label' for='nameVertical'> Kategori Adı</Label>
                     <input className='form-control'  {...register("de.name", { required: false })} />
                   </Col>
-                  <Col sm='12' className='mb-1'>
-                    <Label className='form-label' for='descriptionVertical'> Açıklama</Label>
-                    <input className='form-control'  {...register("de.description", { required: false })} />
-                  </Col>
+                 
                 </Row>
               </TabPane>
             </TabContent>

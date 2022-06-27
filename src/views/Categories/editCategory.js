@@ -78,7 +78,7 @@ const PillFilled = () => {
 
 
   const submitForm = async (data) => {
-    if ((imageStatus) || (data.tr.name && data.tr.description)) {
+    if ((imageStatus) || (data.tr.name )) {
       setstatus(false)
       const formData = new FormData();
 
@@ -209,10 +209,7 @@ const PillFilled = () => {
                         <Label className='form-label' for='nameVertical'>Kategori Adı </Label>
                         <input className='form-control' defaultValue={data.category.tr.name} placeholder='Kategori Adı' {...register("tr.name", { required: true })} />
                       </Col>
-                      <Col sm='12' className='mb-1'>
-                        <Label className='form-label' for='descriptionVertical'>  Açıklama </Label>
-                        <input className='form-control' defaultValue={data.category.tr.description} placeholder='Kategori Açıklama' {...register("tr.description", { required: true })} />
-                      </Col>
+                      
                     </Row>
                     <FileUploaderRestrictions clearImage={setCompressedFile} handleCompressedUpload={handleCompressedUpload} />
 
@@ -223,10 +220,7 @@ const PillFilled = () => {
                         <Label className='form-label' for='nameVertical'>Kategori Adı </Label>
                         <input className='form-control' defaultValue={data.category.en.name} placeholder='Kategori Adı' {...register("en.name")} />
                       </Col>
-                      <Col sm='12' className='mb-1'>
-                        <Label className='form-label' for='descriptionVertical'>  Açıklama </Label>
-                        <input className='form-control' defaultValue={data.category.en.description} placeholder='Kategori Açıklama' {...register("en.description")} />
-                      </Col>
+                   
                     </Row>
                   </TabPane>
                   <TabPane tabId='3'>
@@ -234,10 +228,6 @@ const PillFilled = () => {
                       <Col sm='12' className='mb-1'>
                         <Label className='form-label' for='nameVertical'>Kategori Adı </Label>
                         <input className='form-control' defaultValue={data.category.ru.name} placeholder='Kategori Adı' {...register("ru.name")} />
-                      </Col>
-                      <Col sm='12' className='mb-1'>
-                        <Label className='form-label' for='descriptionVertical'>  Açıklama </Label>
-                        <input className='form-control' defaultValue={data.category.ru.description} placeholder='Kategori Açıklama' {...register("ru.description")} />
                       </Col>
                     </Row>
                   </TabPane>
@@ -247,10 +237,6 @@ const PillFilled = () => {
                         <Label className='form-label' for='nameVertical'>Kategori Adı </Label>
                         <input className='form-control' defaultValue={data.category.fr.name} placeholder='Kategori Adı' {...register("fr.name")} />
                       </Col>
-                      <Col sm='12' className='mb-1'>
-                        <Label className='form-label' for='descriptionVertical'>  Açıklama </Label>
-                        <input className='form-control' defaultValue={data.category.fr.description} placeholder='Kategori Açıklama' {...register("fr.description")} />
-                      </Col>
                     </Row>
                   </TabPane>
                   <TabPane tabId='5'>
@@ -259,10 +245,6 @@ const PillFilled = () => {
                         <Label className='form-label' for='nameVertical'>Kategori Adı </Label>
                         <input className='form-control' defaultValue={data.category.ar.name} placeholder='Kategori Adı' {...register("ar.name")} />
                       </Col>
-                      <Col sm='12' className='mb-1'>
-                        <Label className='form-label' for='descriptionVertical'>  Açıklama </Label>
-                        <input className='form-control' defaultValue={data.category.ar.description} placeholder='Kategori Açıklama' {...register("ar.description")} />
-                      </Col>
                     </Row>
                   </TabPane>
                   <TabPane tabId='6'>
@@ -270,10 +252,6 @@ const PillFilled = () => {
                       <Col sm='12' className='mb-1'>
                         <Label className='form-label' for='nameVertical'>Kategori Adı </Label>
                         <input className='form-control' defaultValue={data.category.de.name} placeholder='Kategori Adı' {...register("de.name")} />
-                      </Col>
-                      <Col sm='12' className='mb-1'>
-                        <Label className='form-label' for='descriptionVertical'>  Açıklama </Label>
-                        <input className='form-control' defaultValue={data.category.de.description} placeholder='Kategori Açıklama' {...register("de.description")} />
                       </Col>
                     </Row>
                   </TabPane>
