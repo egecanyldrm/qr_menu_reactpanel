@@ -20,6 +20,8 @@ const PillFilled = () => {
   const dispatch = useDispatch();
   const navigate = useHistory()
   const { register, handleSubmit, formState: { errors } } = useForm();
+  const [translateStatus, setTranslateStatus] = useState(true)
+  const [translateData, setTranslateData] = useState(false);
 
   const [rootcategory, setRootCategory] = useState(null);
 
@@ -30,6 +32,21 @@ const PillFilled = () => {
   const [imageStatus, setImageStatus] = useState(false);
   const [categories, setCategories] = useState([]);
 
+  const Translate = async (data) => {
+    try {
+      setTranslateStatus(false)
+      const res = await axios.post('/admin/product-translate', { productName: data.tr.name, productDescription: data.tr.description }).catch(err => { throw err.response.status });
+      setTranslateData(res.data)
+      handleSuccess({ title: 'Çeviri Başarılı', timer: 1000, message: 'Çevir başarılı bir şekilde yapıldı.' });
+      setTranslateStatus(true)
+    } catch (err) {
+      if (err === 404) {
+        toast.error(<ErrorToast message={'Çeviri Başarısız!'} />, { icon: false, hideProgressBar: true })
+      } else if (err === 401) {
+        dispatch(unAuthorized())
+      }
+    }
+  }
   const handleCompressedUpload = (file) => {
     const image = file;
     new Compressor(image, {
@@ -44,7 +61,6 @@ const PillFilled = () => {
   };
 
   useEffect(async () => {
-
     try {
       const categories = await axios.get('/admin/categories').catch(err => { throw err.response.status });
       const selectCategories = categories.data.map(category => { return { label: category.tr.name, value: category._id } })
@@ -74,20 +90,26 @@ const PillFilled = () => {
   const onSubmit = async (data) => {
     setstatus(false)
     const formData = new FormData();
-    const json = rootcategory ?
-      {
-        ...data,
-        categoryid: rootcategory
-      } :
-      data;
 
-    if (state.package === 'deluxe' && imageStatus && compressedFile) {
-      formData.append('image', compressedFile, compressedFile.name);
+    // Ürüne ait ana kategori var ise eklenir 
+    if (rootcategory) {
+      data.categoryid = rootcategory
+      if (translateData) {
+        translateData.categoryid = rootcategory
+      }
     }
-    formData.set('product', qs.stringify(json));
+    //Resim varsa form dataya eklenir
+    if (state.package === 'deluxe' && imageStatus && compressedFile) formData.append('image', compressedFile, compressedFile.name)
+
+    //Çeviri yapılıyorsa çeviri gönderilir
+    if (translateData) {
+      translateData.price = data.price;
+      formData.set('product', qs.stringify(translateData));
+    } else {
+      formData.set('product', qs.stringify(data));
+    }
 
     try {
-      // Send the compressed image file to server with XMLHttpRequest.
       await axios.post('/admin/add-product', formData).catch(err => { throw err.response.status })
       setstatus(true)
       handleSuccess({ title: 'Kayıt Başarılı', timer: 1200, message: 'Kategori başarılı bir şekilde kayıt edildi.' });
@@ -242,11 +264,19 @@ const PillFilled = () => {
                 <Row>
                   <Col sm='12' className='mb-1'>
                     <Label className='form-label' for='nameVertical'>Ürün Adı</Label>
-                    <input className='form-control' placeholder='Ürün Adı' {...register("en.name", { required: false })} />
+                    {
+                      translateData ?
+                        <input className='form-control' defaultValue={translateData.en.name}  {...register("en.name")} />
+                        : <input className='form-control'  {...register("en.name")} />
+                    }
                   </Col>
                   <Col sm='12' className='mb-1'>
                     <Label className='form-label' for='descriptionVertical'> Açıklama</Label>
-                    <input className='form-control' placeholder='Açıklama' {...register("en.description", { required: false })} />
+                    {
+                      translateData ?
+                        <input className='form-control' defaultValue={translateData.en.description}  {...register("en.description")} />
+                        : <input className='form-control'  {...register("en.description")} />
+                    }
                   </Col>
                 </Row>
               </TabPane>
@@ -254,11 +284,18 @@ const PillFilled = () => {
                 <Row>
                   <Col sm='12' className='mb-1'>
                     <Label className='form-label' for='nameVertical'>Ürün Adı</Label>
-                    <input className='form-control' placeholder='Ürün Adı' {...register("ru.name", { required: false })} />
-                  </Col>
+                    {
+                      translateData ?
+                        <input className='form-control' defaultValue={translateData.ru.name}  {...register("ru.name")} />
+                        : <input className='form-control'  {...register("ru.name")} />
+                    }                  </Col>
                   <Col sm='12' className='mb-1'>
                     <Label className='form-label' for='descriptionVertical'>Açıklama</Label>
-                    <input className='form-control' placeholder='Açıklama' {...register("ru.description", { required: false })} />
+                    {
+                      translateData ?
+                        <input className='form-control' defaultValue={translateData.ru.description}  {...register("ru.description")} />
+                        : <input className='form-control'  {...register("ru.description")} />
+                    }
                   </Col>
                 </Row>
               </TabPane>
@@ -266,11 +303,19 @@ const PillFilled = () => {
                 <Row>
                   <Col sm='12' className='mb-1'>
                     <Label className='form-label' for='nameVertical'>Ürün Adı</Label>
-                    <input className='form-control' placeholder='Ürün Adı' {...register("fr.name", { required: false })} />
+                    {
+                      translateData ?
+                        <input className='form-control' defaultValue={translateData.fr.name}  {...register("fr.name")} />
+                        : <input className='form-control'  {...register("fr.name")} />
+                    }
                   </Col>
                   <Col sm='12' className='mb-1'>
                     <Label className='form-label' for='descriptionVertical'>Açıklama</Label>
-                    <input className='form-control' placeholder='Açıklama' {...register("fr.description", { required: false })} />
+                    {
+                      translateData ?
+                        <input className='form-control' defaultValue={translateData.fr.description}  {...register("fr.description")} />
+                        : <input className='form-control'  {...register("fr.description")} />
+                    }
                   </Col>
                 </Row>
               </TabPane>
@@ -278,11 +323,19 @@ const PillFilled = () => {
                 <Row>
                   <Col sm='12' className='mb-1'>
                     <Label className='form-label' for='nameVertical'>Ürün Adı</Label>
-                    <input className='form-control' placeholder='Ürün Adı' {...register("ar.name", { required: false })} />
+                    {
+                      translateData ?
+                        <input className='form-control' defaultValue={translateData.ar.name}  {...register("ar.name")} />
+                        : <input className='form-control'  {...register("ar.name")} />
+                    }
                   </Col>
                   <Col sm='12' className='mb-1'>
                     <Label className='form-label' for='descriptionVertical'>Açıklama</Label>
-                    <input className='form-control' placeholder='Açıklama' {...register("ar.description", { required: false })} />
+                    {
+                      translateData ?
+                        <input className='form-control' defaultValue={translateData.ar.description}  {...register("ar.description")} />
+                        : <input className='form-control'  {...register("ar.description")} />
+                    }
                   </Col>
                 </Row>
               </TabPane>
@@ -290,11 +343,19 @@ const PillFilled = () => {
                 <Row>
                   <Col sm='12' className='mb-1'>
                     <Label className='form-label' for='nameVertical'>Ürün Adı</Label>
-                    <input className='form-control' placeholder='Ürün Adı' {...register("de.name", { required: false })} />
+                    {
+                      translateData ?
+                        <input className='form-control' defaultValue={translateData.de.name}  {...register("de.name")} />
+                        : <input className='form-control'  {...register("de.name")} />
+                    }
                   </Col>
                   <Col sm='12' className='mb-1'>
                     <Label className='form-label' for='descriptionVertical'>Açıklama</Label>
-                    <input className='form-control' placeholder='Açıklama' {...register("de.description", { required: false })} />
+                    {
+                      translateData ?
+                        <input className='form-control' defaultValue={translateData.de.description}  {...register("de.description")} />
+                        : <input className='form-control'  {...register("de.description")} />
+                    }
                   </Col>
                 </Row>
               </TabPane>
@@ -313,6 +374,21 @@ const PillFilled = () => {
                   <span className='ms-50'>Yükleniyor...</span>
                 </Button>
               }
+              <div className='ms-2'>
+                {
+                  state.language === true && translateStatus ?
+                    <Button onClick={() => handleSubmit(Translate)(event).catch((error) => { })
+                    } className='me-1' color='danger'>
+                      Otomatik Dil Çevirme
+                    </Button>
+                    :
+                    <Button color='danger'>
+                      <Spinner color='white' size='sm' />
+                      <span className='ms-50'> Dil Çevirisi Yapılıyor...</span>
+                    </Button>
+                }
+
+              </div>
             </div>
           </CardFooter>
         </form>

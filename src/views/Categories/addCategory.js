@@ -15,22 +15,21 @@ import { ErrorToast } from '../../extension/toast';
 import { useHistory } from "react-router-dom";
 import { useForm } from 'react-hook-form';
 
-
 const PillFilled = () => {
   // ** States
   const { register, handleSubmit, formState: { errors } } = useForm();
-  const [rootcategory, setRootCategory] = useState(null);
   const [active, setActive] = useState('1');
+  const [translateStatus, setTranslateStatus] = useState(true)
   const dispatch = useDispatch();
   const navigate = useHistory()
   const [status, setstatus] = useState(true)
+  const [translateData, setTranslateData] = useState(false);
 
   const state = useSelector(state => state.auth.user);
 
 
   const [compressedFile, setCompressedFile] = useState(null);
   const [imageStatus, setImageStatus] = useState(false);
-  const [categories, setCategories] = useState([]);
 
   const handleCompressedUpload = (file) => {
     const image = file;
@@ -47,22 +46,6 @@ const PillFilled = () => {
     });
   };
 
-  useEffect(async () => {
-
-    try {
-      const categories = await axios.get('/admin/categories').catch(err => { throw err.response.status });
-      const selectCategories = categories.data.map(category => { return { label: category.tr.name, value: category._id } })
-      setCategories(selectCategories);
-    } catch (err) {
-      if (err === 404) {
-        toast.error(<ErrorToast message={'Bir Hata Oluştu !'} />, { icon: false, hideProgressBar: true })
-        navigate.push('/categories');
-      } else if (err === 401) {
-        dispatch(unAuthorized())
-      }
-    }
-  }, [])
-
 
   useEffect(() => {
     if (compressedFile) {
@@ -74,26 +57,34 @@ const PillFilled = () => {
     setActive(tab)
   }
 
+  const Translate = async (data) => {
+    try {
+      setTranslateStatus(false)
+      const res = await axios.post('/admin/category-translate', { categoryName: data.tr.name }).catch(err => { throw err.response.status });
+      setTranslateData(res.data)
+      handleSuccess({ title: 'Çeviri Başarılı', timer: 1000, message: 'Çevir başarılı bir şekilde yapıldı.' });
+      setTranslateStatus(true)
+    } catch (err) {
+      if (err === 404) {
+        toast.error(<ErrorToast message={'Çeviri Başarısız!'} />, { icon: false, hideProgressBar: true })
+      } else if (err === 401) {
+        dispatch(unAuthorized())
+      }
+    }
+  }
 
   const onSubmit = async (data) => {
-
-    if ((imageStatus && compressedFile) && ( data.tr.name)) {
+    if ((imageStatus && compressedFile) && (data.tr.name)) {
       setstatus(false)
-
       const formData = new FormData();
-      const json = rootcategory ?
-        {
-          ...data,
-          rootcategory: rootcategory
-        } : data;
+
+      if (translateData) formData.set('category', qs.stringify(translateData.category))
+      else formData.set('category', qs.stringify(data));
 
       formData.append('image', compressedFile, compressedFile.name);
-      formData.set('category', qs.stringify(json));
-
       try {
         await axios.post('/admin/add-category', formData).catch(err => { throw err.response.status })
         setstatus(true)
-
         handleSuccess({ title: 'Kayıt Başarılı', timer: 1200, message: 'Kategori başarılı bir şekilde kayıt edildi.' });
         setTimeout(() => {
           navigate.push('/categories')
@@ -111,7 +102,6 @@ const PillFilled = () => {
       toast.error(<ErrorToast message={'Lütfen Resim Yükleyiniz'} />, { icon: false, hideProgressBar: true })
     }
   }
-
   return (
     <Fragment>
       <Card>
@@ -119,7 +109,6 @@ const PillFilled = () => {
           handleSubmit(onSubmit)(event).catch((error) => {
           })
         }}>
-
           <CardBody>
             <Nav pills fill>
               {state.package === 'deluxe' &&
@@ -214,55 +203,74 @@ const PillFilled = () => {
                     </Label>
                     <input className='form-control' placeholder='Kategori Adı'  {...register("tr.name", { required: true })} />
                   </Col>
-                 
-
                 </Row>
                 <FileUploaderRestrictions clearImage={setCompressedFile} handleCompressedUpload={handleCompressedUpload} />
-
               </TabPane>
               <TabPane tabId='2'>
                 <Row>
                   <Col sm='12' className='mb-1'>
                     <Label className='form-label' for='nameVertical'>   Kategori Adı  </Label>
-                    <input className='form-control'  {...register("en.name")} />
+                    {
+                      translateData ?
+                        <input className='form-control' defaultValue={translateData.category.en.name}  {...register("en.name")} />
+                        :
+                        <input className='form-control'  {...register("en.name")} />
+
+                    }
                   </Col>
-                 
                 </Row>
               </TabPane>
               <TabPane tabId='3'>
                 <Row>
                   <Col sm='12' className='mb-1'>
                     <Label className='form-label' for='nameVertical'> Kategori Adı</Label>
-                    <input className='form-control'  {...register("ru.name", { required: false })} />
+                    {
+                      translateData ?
+                        <input className='form-control' defaultValue={translateData.category.ru.name}  {...register("ru.name")} />
+                        :
+                        <input className='form-control'  {...register("ru.name")} />
+                    }
                   </Col>
-               
                 </Row>
               </TabPane>
               <TabPane tabId='4'>
                 <Row>
                   <Col sm='12' className='mb-1'>
                     <Label className='form-label' for='nameVertical'> Kategori Adı</Label>
-                    <input className='form-control'  {...register("fr.name", { required: false })} />
+                    {
+                      translateData ?
+                        <input className='form-control' defaultValue={translateData.category.fr.name}  {...register("fr.name")} />
+                        :
+                        <input className='form-control'  {...register("fr.name")} />
+                    }
                   </Col>
-               
                 </Row>
               </TabPane>
               <TabPane tabId='5'>
                 <Row>
                   <Col sm='12' className='mb-1'>
                     <Label className='form-label' for='nameVertical'> Kategori Adı</Label>
-                    <input className='form-control'  {...register("ar.name", { required: false })} />
+                    {
+                      translateData ?
+                        <input className='form-control' defaultValue={translateData.category.ar.name}  {...register("ar.name")} />
+                        :
+                        <input className='form-control'  {...register("ar.name")} />
+                    }
                   </Col>
-                 
+
                 </Row>
               </TabPane>
               <TabPane tabId='6'>
                 <Row>
                   <Col sm='12' className='mb-1'>
                     <Label className='form-label' for='nameVertical'> Kategori Adı</Label>
-                    <input className='form-control'  {...register("de.name", { required: false })} />
-                  </Col>
-                 
+                    {
+                      translateData ?
+                        <input className='form-control' defaultValue={translateData.category.de.name}  {...register("de.name")} />
+                        :
+                        <input className='form-control'  {...register("de.name")} />
+                    }
+                     </Col>
                 </Row>
               </TabPane>
             </TabContent>
@@ -280,8 +288,24 @@ const PillFilled = () => {
                   <span className='ms-50'>Yükleniyor...</span>
                 </Button>
               }
+              <div className='ms-2'>
+                {
+                  state.language === true && translateStatus ?
+                    <Button onClick={() => handleSubmit(Translate)(event).catch((error) => { })
+                    } className='me-1' color='danger'>
+                      Otomatik Dil Çevirme
+                    </Button>
+                    :
+                    <Button color='danger'>
+                      <Spinner color='white' size='sm' />
+                      <span className='ms-50'> Dil Çevirisi Yapılıyor...</span>
+                    </Button>
+                }
+
+              </div>
             </div>
           </CardFooter>
+
         </form>
 
       </Card>
@@ -291,34 +315,3 @@ const PillFilled = () => {
 }
 export default PillFilled
 
-
-
-/* 
-
-<Col sm='12' className='mb-1'>
-                    <Label className='form-label'>Kategori</Label>
-
-                    <Select
-                      noOptionsMessage={({ inputValue: string }) => 'Kategori Bulunamadı...'}
-                      // theme={selectThemeColors}
-                      className='react-select'
-                      classNamePrefix='select'
-                      // defaultValue={categories[1]}
-                      name='clear'
-                      options={categories}
-                      isClearable
-                      singleValue
-                      placeholder='Kategori Seç'
-                      onChange={(e) => {
-                        if (e) {
-                          setRootCategory(e.value)
-                        } else {
-                          setRootCategory(null)
-                        }
-                      }}
-                    />
-
-                  </Col>
-
-
-*/
