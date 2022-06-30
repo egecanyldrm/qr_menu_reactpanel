@@ -121,7 +121,7 @@ const PillFilled = () => {
                       toggle('1')
                     }}
                   >
-                    Türkçe
+                    Genel
                   </NavLink>
                 </NavItem>
               }
@@ -134,65 +134,11 @@ const PillFilled = () => {
                       toggle('2')
                     }}
                   >
-                    İngilizce
+                    Dil Bilgileri
                   </NavLink>
                 </NavItem>
               }
-              {state.language === true &&
 
-                <NavItem>
-                  <NavLink
-                    active={active === '3'}
-                    onClick={() => {
-                      toggle('3')
-                    }}
-                  >
-                    Rusça
-                  </NavLink>
-                </NavItem>
-              }
-              {
-                state.language === true &&
-
-                <NavItem>
-                  <NavLink
-                    active={active === '4'}
-                    onClick={() => {
-                      toggle('4')
-                    }}
-                  >
-                    Fransızca
-                  </NavLink>
-                </NavItem>
-              }
-              {
-                state.language === true &&
-
-                <NavItem>
-                  <NavLink
-                    active={active === '5'}
-                    onClick={() => {
-                      toggle('5')
-                    }}
-                  >
-                    Arapça
-                  </NavLink>
-                </NavItem>
-              }
-              {
-                state.language === true &&
-
-                <NavItem>
-                  <NavLink
-                    active={active === '6'}
-                    onClick={() => {
-                      toggle('6')
-                    }}
-                  >
-                    Almanca
-                  </NavLink>
-                </NavItem>
-              }
             </Nav>
             <TabContent className='py-50' activeTab={active}>
               <TabPane tabId='1'>
@@ -209,70 +155,64 @@ const PillFilled = () => {
               <TabPane tabId='2'>
                 <Row>
                   <Col sm='12' className='mb-1'>
-                    <Label className='form-label' for='nameVertical'>   Kategori Adı  </Label>
+                    <Label className='form-label' for='nameVertical'>   İngilizce </Label>
                     {
                       translateData ?
-                        <input className='form-control' defaultValue={translateData.category.en.name}  {...register("en.name")} />
+                        <input className='form-control' placeholder='İngilizce ' defaultValue={translateData.category.en.name}  {...register("en.name")} />
                         :
-                        <input className='form-control'  {...register("en.name")} />
+                        <input className='form-control' placeholder='İngilizce ' {...register("en.name")} />
 
                     }
                   </Col>
                 </Row>
-              </TabPane>
-              <TabPane tabId='3'>
                 <Row>
                   <Col sm='12' className='mb-1'>
-                    <Label className='form-label' for='nameVertical'> Kategori Adı</Label>
+                    <Label className='form-label' for='nameVertical'> Rusça</Label>
                     {
                       translateData ?
-                        <input className='form-control' defaultValue={translateData.category.ru.name}  {...register("ru.name")} />
+                        <input className='form-control' placeholder='Rusça ' defaultValue={translateData.category.ru.name}  {...register("ru.name")} />
                         :
-                        <input className='form-control'  {...register("ru.name")} />
+                        <input className='form-control' placeholder='Rusça ' {...register("ru.name")} />
                     }
                   </Col>
                 </Row>
-              </TabPane>
-              <TabPane tabId='4'>
+
                 <Row>
                   <Col sm='12' className='mb-1'>
-                    <Label className='form-label' for='nameVertical'> Kategori Adı</Label>
+                    <Label className='form-label' for='nameVertical'> Fransızca</Label>
                     {
                       translateData ?
-                        <input className='form-control' defaultValue={translateData.category.fr.name}  {...register("fr.name")} />
+                        <input className='form-control' placeholder='Fransızca ' defaultValue={translateData.category.fr.name}  {...register("fr.name")} />
                         :
-                        <input className='form-control'  {...register("fr.name")} />
+                        <input className='form-control'   placeholder='Fransızca' {...register("fr.name")} />
                     }
                   </Col>
                 </Row>
-              </TabPane>
-              <TabPane tabId='5'>
                 <Row>
                   <Col sm='12' className='mb-1'>
-                    <Label className='form-label' for='nameVertical'> Kategori Adı</Label>
+                    <Label className='form-label' for='nameVertical'> Arapça</Label>
                     {
                       translateData ?
-                        <input className='form-control' defaultValue={translateData.category.ar.name}  {...register("ar.name")} />
+                        <input className='form-control' placeholder='Arapça' defaultValue={translateData.category.ar.name}  {...register("ar.name")} />
                         :
-                        <input className='form-control'  {...register("ar.name")} />
+                        <input className='form-control' placeholder='Arapça' {...register("ar.name")} />
                     }
                   </Col>
 
                 </Row>
-              </TabPane>
-              <TabPane tabId='6'>
                 <Row>
                   <Col sm='12' className='mb-1'>
-                    <Label className='form-label' for='nameVertical'> Kategori Adı</Label>
+                    <Label className='form-label' for='nameVertical'> Almanca</Label>
                     {
                       translateData ?
-                        <input className='form-control' defaultValue={translateData.category.de.name}  {...register("de.name")} />
+                        <input className='form-control' placeholder='Almanca' defaultValue={translateData.category.de.name}  {...register("de.name")} />
                         :
-                        <input className='form-control'  {...register("de.name")} />
+                        <input className='form-control'  placeholder='Almanca' {...register("de.name")} />
                     }
-                     </Col>
+                  </Col>
                 </Row>
               </TabPane>
+
             </TabContent>
           </CardBody>
           <CardFooter>
