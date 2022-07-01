@@ -75,8 +75,6 @@ const PillFilled = () => {
       setCategories(selectCategories)
       //Ürünün kategorisi
 
-      console.log(data)
-
       if (data.product.variant) setVariations(data.product.variant)
 
       if (data.productCategory) {
