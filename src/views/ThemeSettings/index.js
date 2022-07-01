@@ -22,6 +22,15 @@ const themes = [
         package: ['special']
     },
     {
+        name: 'troy',
+        description: [
+            " İşletme adı logo olarak kullanılır. ",
+            " Ürünler resimsiz listelenir "
+        ],
+        package: ['deluxe']
+    }
+    ,
+    {
         name: 'atlas',
         description: [
             'Aşağıya doğru açılır akordiyon tasarımlı tema',
@@ -30,7 +39,6 @@ const themes = [
         ],
         package: ['deluxe']
     },
-
     {
         name: 'capella',
         description: [
@@ -46,15 +54,6 @@ const themes = [
         description: [
             " İşletme adı logo olarak kullanılır. ",
             " Ürünler resimli listelenir "
-        ],
-        package: ['deluxe']
-    }
-    ,
-    {
-        name: 'troy',
-        description: [
-            " İşletme adı logo olarak kullanılır. ",
-            " Ürünler resimsiz listelenir "
         ],
         package: ['deluxe']
     }

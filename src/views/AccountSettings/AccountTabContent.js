@@ -113,17 +113,17 @@ const AccountTabs = ({ userDetail }) => {
                       <p className='mb-0'> JPG veya PNG türünde yükleme yapınız</p>
                     </div>
                   </div>
-
-
-
                 </div>
-                <div className='col d-flex justify-content-end'>
+                {/* 
+              
+               <div className='col d-flex justify-content-end'>
                   <div>
                     <img className='shadow-sm' alt="ImageName" src={userDetail.qrcode} style={{ height: 100, width: 100 }} />
 
                     <a href={userDetail.qrcode} className='btn btn-primary ms-4 ' download> İndir</a>
                   </div>
                 </div>
+              */}
               </Row>
 
               <Row className='mt-2'>
