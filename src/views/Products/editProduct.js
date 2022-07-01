@@ -6,7 +6,9 @@ import Select from 'react-select'
 import qs from 'qs';
 import { unAuthorized } from '../../redux/authentication';
 // ** Reactstrap Imports
-import { TabContent, TabPane, Nav, NavItem, NavLink, Card, CardBody, Form, Row, Col, Label, Spinner, Button, CardFooter } from 'reactstrap'
+import { Trash } from 'react-feather'
+
+import { TabContent, TabPane, Nav, NavItem, NavLink, Card, CardBody, Form, Row, Col, Label, Spinner, Button, CardFooter, Table } from 'reactstrap'
 import FileUploaderRestrictions from '../../components/FileUploaderRestrictions'
 import Compressor from 'compressorjs';
 import axios from 'axios';
@@ -34,7 +36,9 @@ const PillFilled = () => {
   const [defaultCategory, setDefaultCategory] = useState();
 
   const [categories, setCategories] = useState([]);
-
+  const [variations, setVariations] = useState([])
+  const [name, setName] = useState('')
+  const [value, setValue] = useState('')
 
   const [compressedFile, setCompressedFile] = useState(null);
   const [imageStatus, setImageStatus] = useState(false);
@@ -54,6 +58,13 @@ const PillFilled = () => {
     });
   };
 
+  const removeVariant = (variantKey) => {
+    setVariations(variations.filter(item => item.key !== variantKey))
+  }
+
+  const addVariation = () => {
+    variations.push({ key: name, value: value })
+  }
 
   useEffect(async () => {
     try {
@@ -63,6 +74,11 @@ const PillFilled = () => {
       const selectCategories = data.categories.map(category => { return { label: category.tr.name, value: category._id } })
       setCategories(selectCategories)
       //Ürünün kategorisi
+
+      console.log(data)
+
+      if (data.product.variant) setVariations(data.product.variant)
+
       if (data.productCategory) {
 
         let category = data.productCategory;
@@ -96,11 +112,17 @@ const PillFilled = () => {
     if ((imageStatus) || data) {
       setstatus(false)
       const formData = new FormData();
+
+      //Varyasyonlar ekleniyor
+      if (variations.length > 0) {
+        data.variant = variations
+      } else {
+        data.variant = false
+      }
+      // Ana kategori varsa ekleniyor
       if (rootcategory) data.categoryid = rootcategory
       // Eğer resim varsa form datanın içine dahil ediliyor 
-
       if (compressedFile && imageStatus && state.package === 'deluxe') formData.append('image', compressedFile, compressedFile.name);
-
       formData.set('product', qs.stringify(data));
       try {
         await axios.post(`/admin/edit-product/${params.productid}`, formData).catch(err => { throw err.response.status })
@@ -159,6 +181,16 @@ const PillFilled = () => {
                       </NavLink>
                     </NavItem>
                   }
+                  <NavItem>
+                    <NavLink
+                      active={active === '3'}
+                      onClick={() => {
+                        toggle('3')
+                      }}
+                    >
+                      Varyasyon Bilgileri
+                    </NavLink>
+                  </NavItem>
                 </Nav>
                 <TabContent className='py-50' activeTab={active}>
                   <TabPane tabId='1'>
@@ -169,7 +201,7 @@ const PillFilled = () => {
                       </Col>
                       <Col sm='12' className='mb-1'>
                         <Label className='form-label'  > Açıklama</Label>
-                        <input className='form-control' defaultValue={data.product.tr.description} placeholder='Ürün Açıklaması' {...register("tr.description", { required: true })} />
+                        <input className='form-control' defaultValue={data.product.tr.description} placeholder='Ürün Açıklaması' {...register("tr.description", { required: false })} />
                       </Col>
                       <Col sm='12' className='mb-1'>
                         <Label className='form-label'  >  Fiyat</Label>
@@ -205,7 +237,7 @@ const PillFilled = () => {
                   <TabPane tabId='2'>
                     <Row className='mt-2'>
                       <Col sm='12' className='mb-1'>
-                        <Label className='form-label'  >İngilizce Kategori Adı</Label>
+                        <Label className='form-label'  >İngilizce Ürün Adı</Label>
                         <input className='form-control' defaultValue={data.product.en.name} placeholder='Ürün Adı' {...register("en.name", { required: false })} />
                       </Col>
                       <Col sm='12' className='mb-1'>
@@ -215,7 +247,7 @@ const PillFilled = () => {
                     </Row>
                     <Row className='mt-2'>
                       <Col sm='12' className='mb-1'>
-                        <Label className='form-label'  > Rusça Kategori Adı</Label>
+                        <Label className='form-label'  > Rusça Ürün Adı</Label>
                         <input className='form-control' defaultValue={data.product.ru.name} placeholder='Ürün Adı' {...register("ru.name", { required: false })} />
                       </Col>
                       <Col sm='12' className='mb-1'>
@@ -225,7 +257,7 @@ const PillFilled = () => {
                     </Row>
                     <Row className='mt-2'>
                       <Col sm='12' className='mb-1'>
-                        <Label className='form-label'  > Fransızca Kategori Adı</Label>
+                        <Label className='form-label'  > Fransızca Ürün Adı</Label>
                         <input className='form-control' defaultValue={data.product.fr.name} placeholder='Ürün Adı' {...register("fr.name", { required: false })} />
                       </Col>
                       <Col sm='12' className='mb-1'>
@@ -235,7 +267,7 @@ const PillFilled = () => {
                     </Row>
                     <Row className='mt-2'>
                       <Col sm='12' className='mb-1'>
-                        <Label className='form-label'  > Arapça Kategori Adı</Label>
+                        <Label className='form-label'  > Arapça Ürün Adı</Label>
                         <input className='form-control' defaultValue={data.product.ar.name} placeholder='Ürün Adı' {...register("ar.name", { required: false })} />
                       </Col>
                       <Col sm='12' className='mb-1'>
@@ -245,15 +277,79 @@ const PillFilled = () => {
                     </Row>
                     <Row className='mt-2'>
                       <Col sm='12' className='mb-1'>
-                        <Label className='form-label'  >Almanca Kategori Adı</Label>
+                        <Label className='form-label'  >Almanca Ürün Adı</Label>
                         <input className='form-control' defaultValue={data.product.de.name} placeholder='Ürün Adı' {...register("de.name", { required: false })} />
                       </Col>
                       <Col sm='12' className='mb-1'>
-                        <Label className='form-label'  >AlmancaAçıklama</Label>
+                        <Label className='form-label'  >Almanca Açıklama</Label>
                         <input className='form-control' defaultValue={data.product.de.description} placeholder='Açıklama' {...register("de.description", { required: false })} />
                       </Col>
                     </Row>
                   </TabPane>
+
+
+
+                  <TabPane tabId='3'>
+                    <Row>
+                      <Col lg='4' md='4' sm='4' className='mb-1'>
+                        <Label className='form-label' > Varyant Adı</Label>
+                        <input className='form-control' placeholder='Varyant  Adı' value={name} onChange={e => setName(e.target.value)} />
+                      </Col>
+                      <Col lg='4' md='4' sm='4' className='mb-1'>
+                        <Label className='form-label' >Varyant Değeri </Label>
+                        <input className='form-control' placeholder='Varyant  Değeri' value={value} onChange={e => setValue(e.target.value)} />
+                      </Col>
+                      <Col lg='4' md='4' sm='4'>
+                        <Button color='success' className='mt-2' onClick={() => {
+                          addVariation();
+                          setName('')
+                          setValue('')
+                        }}>
+                          Varyant Ekle
+                        </Button>
+                      </Col>
+                    </Row>
+                    <Row className='px-1 mt-2'>
+                      <Table
+                        hover
+                        striped
+                      >
+                        <thead>
+                          <tr>
+                            <th>
+                              Varyant Adı
+                            </th>
+                            <th>
+                              Varyant Değeri
+                            </th>
+                            <th>
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {variations.map((variation, key) => {
+                            return (
+                              <tr key={key}>
+                                <th scope="row">
+                                  {variation.key}
+                                </th>
+                                <td>
+                                  {variation.value}
+                                </td>
+
+                                <td>
+                                  <Button.Ripple onClick={() => {
+                                    removeVariant(variation.key, variation.value)
+                                  }} className='btn-icon' color='flat-danger' ><Trash size={17} /></Button.Ripple>
+                                </td>
+                              </tr>
+                            )
+                          })}
+                        </tbody>
+                      </Table>
+                    </Row>
+                  </TabPane>
+
                 </TabContent>
               </CardBody>
               <CardFooter>

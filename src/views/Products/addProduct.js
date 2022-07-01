@@ -6,7 +6,8 @@ import Select from 'react-select'
 import qs from 'qs';
 import { unAuthorized } from '../../redux/authentication';
 // ** Reactstrap Imports
-import { TabContent, TabPane, Nav, NavItem, NavLink, Card, CardBody, Form, Row, Col, Label, Spinner, Button, CardFooter } from 'reactstrap'
+import { Trash } from 'react-feather'
+import { TabContent, TabPane, Nav, NavItem, NavLink, Card, CardBody, Form, Row, Col, Label, Spinner, Button, CardFooter, Table } from 'reactstrap'
 import FileUploaderRestrictions from '../../components/FileUploaderRestrictions'
 import Compressor from 'compressorjs';
 import axios from 'axios';
@@ -25,8 +26,13 @@ const PillFilled = () => {
 
   const [rootcategory, setRootCategory] = useState(null);
 
+  const [variations, setVariations] = useState([])
+
   const state = useSelector(state => state.auth.user);
   const [status, setstatus] = useState(true)
+
+  const [name, setName] = useState('')
+  const [value, setValue] = useState('')
 
   const [compressedFile, setCompressedFile] = useState(null);
   const [imageStatus, setImageStatus] = useState(false);
@@ -42,7 +48,7 @@ const PillFilled = () => {
     } catch (err) {
       if (err === 404) {
         toast.error(<ErrorToast message={'Çeviri Başarısız!'} />, { icon: false, hideProgressBar: true })
-      setTranslateStatus(true)
+        setTranslateStatus(true)
 
       } else if (err === 401) {
         dispatch(unAuthorized())
@@ -100,6 +106,7 @@ const PillFilled = () => {
         translateData.categoryid = rootcategory
       }
     }
+    if (variations.length > 0) data.variant = variations
     //Resim varsa form dataya eklenir
     if (state.package === 'deluxe' && imageStatus && compressedFile) formData.append('image', compressedFile, compressedFile.name)
 
@@ -126,6 +133,15 @@ const PillFilled = () => {
         dispatch(unAuthorized())
       }
     }
+  }
+
+
+  const removeVariant = (variantKey) => {
+    setVariations(variations.filter(item => item.key !== variantKey))
+  }
+
+  const addVariation = () => {
+    variations.push({ key: name, value: value })
   }
 
   return (
@@ -164,6 +180,16 @@ const PillFilled = () => {
                   </NavLink>
                 </NavItem>
               }
+              <NavItem>
+                <NavLink
+                  active={active === '3'}
+                  onClick={() => {
+                    toggle('3')
+                  }}
+                >
+                  Varyasyon Bilgileri
+                </NavLink>
+              </NavItem>
             </Nav>
             <TabContent className='py-50' activeTab={active}>
               <TabPane tabId='1'>
@@ -226,7 +252,7 @@ const PillFilled = () => {
                     }
                   </Col>
                 </Row>
-                <Row className='mt-2'> 
+                <Row className='mt-2'>
                   <Col sm='12' className='mb-1'>
                     <Label className='form-label' > Rusça Ürün Adı</Label>
                     {
@@ -248,8 +274,8 @@ const PillFilled = () => {
                     <Label className='form-label' > Fransızca Ürün Adı</Label>
                     {
                       translateData ?
-                        <input className='form-control'  placeholder='Fransızca Ürün Adı' defaultValue={translateData.fr.name}  {...register("fr.name")} />
-                        : <input className='form-control'  placeholder='Fransızca Ürün Adı' {...register("fr.name")} />
+                        <input className='form-control' placeholder='Fransızca Ürün Adı' defaultValue={translateData.fr.name}  {...register("fr.name")} />
+                        : <input className='form-control' placeholder='Fransızca Ürün Adı' {...register("fr.name")} />
                     }
                   </Col>
                   <Col sm='12' className='mb-1'>
@@ -266,7 +292,7 @@ const PillFilled = () => {
                     <Label className='form-label' > Arapça Ürün Adı</Label>
                     {
                       translateData ?
-                        <input className='form-control'  placeholder='Arapça Ürün Adı' defaultValue={translateData.ar.name}  {...register("ar.name")} />
+                        <input className='form-control' placeholder='Arapça Ürün Adı' defaultValue={translateData.ar.name}  {...register("ar.name")} />
                         : <input className='form-control' placeholder='Arapça Ürün Adı'  {...register("ar.name")} />
                     }
                   </Col>
@@ -293,9 +319,69 @@ const PillFilled = () => {
                     {
                       translateData ?
                         <input className='form-control' placeholder='Almanca Açıklama' defaultValue={translateData.de.description}  {...register("de.description")} />
-                        : <input className='form-control'  placeholder='Almanca Açıklama' {...register("de.description")} />
+                        : <input className='form-control' placeholder='Almanca Açıklama' {...register("de.description")} />
                     }
                   </Col>
+                </Row>
+              </TabPane>
+              <TabPane tabId='3'>
+                <Row>
+                  <Col lg='4' md='4' sm='4' className='mb-1'>
+                    <Label className='form-label' > Varyant Adı</Label>
+                    <input className='form-control' placeholder='Varyant  Adı' value={name} onChange={e => setName(e.target.value)} />
+                  </Col>
+                  <Col lg='4' md='4' sm='4' className='mb-1'>
+                    <Label className='form-label' >Varyant Değeri </Label>
+                    <input className='form-control' placeholder='Varyant  Değeri' value={value} onChange={e => setValue(e.target.value)} />
+                  </Col>
+                  <Col lg='4' md='4' sm='4'>
+                    <Button color='success' className='mt-2' onClick={() => {
+                      addVariation();
+                      setName('')
+                      setValue('')
+                    }}>
+                      Varyant Ekle
+                    </Button>
+                  </Col>
+                </Row>
+                <Row className='px-1 mt-2'>
+                  <Table
+                    hover
+                    striped
+                  >
+                    <thead>
+                      <tr>
+                        <th>
+                          Varyant Adı
+                        </th>
+                        <th>
+                          Varyant Değeri
+                        </th>
+                        <th>
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {variations.map((variation, key) => {
+                        return (
+                          <tr key={key}>
+                            <th scope="row">
+                              {variation.key}
+                            </th>
+                            <td>
+                              {variation.value}
+                            </td>
+
+                            <td>
+                              <Button.Ripple onClick={() => {
+                                removeVariant(variation.key, variation.value)
+                              }} className='btn-icon' color='flat-danger' ><Trash size={17} /></Button.Ripple>
+                            </td>
+                          </tr>
+                        )
+                      })}
+                    </tbody>
+                  </Table>
                 </Row>
               </TabPane>
             </TabContent>
