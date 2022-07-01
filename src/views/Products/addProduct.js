@@ -106,14 +106,17 @@ const PillFilled = () => {
         translateData.categoryid = rootcategory
       }
     }
-    if (variations.length > 0) data.variant = variations
+    if (variations.length > 0) {
+      data.variant = variations
+    }
     //Resim varsa form dataya eklenir
     if (state.package === 'deluxe' && imageStatus && compressedFile) formData.append('image', compressedFile, compressedFile.name)
 
     //Çeviri yapılıyorsa çeviri gönderilir
     if (translateData) {
       translateData.price = data.price;
-      if (variations.length > 0) data.variant = variations
+      if (variations.length > 0) translateData.variant = variations
+
       formData.set('product', qs.stringify(translateData));
     } else {
       formData.set('product', qs.stringify(data));
