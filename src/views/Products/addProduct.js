@@ -113,6 +113,7 @@ const PillFilled = () => {
     //Çeviri yapılıyorsa çeviri gönderilir
     if (translateData) {
       translateData.price = data.price;
+      if (variations.length > 0) data.variant = variations
       formData.set('product', qs.stringify(translateData));
     } else {
       formData.set('product', qs.stringify(data));
