@@ -40,25 +40,6 @@ const themes = [
         package: ['deluxe']
     },
     {
-        name: 'capella',
-        description: [
-            " İşletme Logosu Kullanılır ",
-            " Ürünler resimli listelenir "
-
-        ],
-        package: ['deluxe']
-    }
-    ,
-    {
-        name: 'aphrodite',
-        description: [
-            " İşletme adı logo olarak kullanılır. ",
-            " Ürünler resimli listelenir "
-        ],
-        package: ['deluxe']
-    }
-    ,
-    {
         name: 'orion',
         description: [
             " İşletme adı logo olarak kullanılır. ",
