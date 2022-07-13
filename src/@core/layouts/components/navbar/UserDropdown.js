@@ -1,13 +1,14 @@
 import { Link } from 'react-router-dom'
 import Avatar from '@components/avatar'
-import { Settings, HelpCircle, Power } from 'react-feather'
-import { UncontrolledDropdown, DropdownMenu, DropdownToggle, DropdownItem } from 'reactstrap'
+import { Settings, HelpCircle, Power, Eye } from 'react-feather'
+import { UncontrolledDropdown, DropdownMenu, DropdownToggle, DropdownItem, Button } from 'reactstrap'
 import { useDispatch, useSelector } from 'react-redux'
 import { logOut } from '../../../../redux/authentication'
 
 const UserDropdown = () => {
   const state = useSelector(state => state.auth.user);
   const dispatch = useDispatch();
+  const username = useSelector(state => state.auth.user.username)
 
 
   return (
@@ -21,25 +22,23 @@ const UserDropdown = () => {
       </DropdownToggle>
       <DropdownMenu end>
 
+        <DropdownItem tag='a' href={process.env.REACT_APP_NEXT_FRONTEND + '/' + username}  >
+          <Eye size={14} className='me-75' />
+          <span className='align-middle'>Site Önizlemesi</span>
+        </DropdownItem>
+
         <Link to='/account-settings'>
           <DropdownItem tag='span' >
             <Settings size={14} className='me-75' />
             <span className='align-middle'>Ayarlar</span>
           </DropdownItem>
         </Link>
-        {/* 
-       <DropdownItem tag='a' href='/help' >
-          <HelpCircle size={14} className='me-75' />
-          <span className='align-middle'>Yardım</span>
-        </DropdownItem>
-      
-      */}
         <DropdownItem tag='a' onClick={() => { dispatch(logOut()) }} >
           <Power size={14} className='me-75' />
           <span className='align-middle'>Çıkış Yap</span>
         </DropdownItem>
       </DropdownMenu>
-    </UncontrolledDropdown >
+    </UncontrolledDropdown>
   )
 }
 

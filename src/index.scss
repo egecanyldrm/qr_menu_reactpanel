@@ -5,3 +5,9 @@
     width: 100%;
     object-position: 80% 80%;
 }
+
+@media (max-width: 768px) {
+    .menu-prewiew {
+        display: none;
+    }
+}

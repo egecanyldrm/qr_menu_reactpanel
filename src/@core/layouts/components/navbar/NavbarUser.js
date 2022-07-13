@@ -36,7 +36,7 @@ const NavbarUser = props => {
         </NavItem>
       </div>
       <ul className='nav navbar-nav align-items-center ms-auto'>
-        <Button color='primary'  className='me-4'  target='_blank' rel='noreferrer' href={process.env.REACT_APP_NEXT_FRONTEND + '/' + state}>
+        <Button color='primary'  className='me-4 menu-prewiew'  target='_blank' rel='noreferrer' href={process.env.REACT_APP_NEXT_FRONTEND + '/' + state}>
           Site Önizlemesi
         </Button>
         <NotificationDropdown />

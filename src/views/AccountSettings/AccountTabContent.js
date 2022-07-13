@@ -37,6 +37,19 @@ const AccountTabs = ({ userDetail }) => {
     });
   };
 
+  const removeLogo =  async () => {
+    try {
+      await axios.post(`/admin/remove-logo`).catch(err => { throw err.response.status });
+      handleSuccess({ title: 'İşlem Başarılı', timer: 1200, message: 'Güncelleme başarılı bir şekilde yapıldı.' });
+    } catch (err) {
+      if (err === 404) {
+        toast.error(<ErrorToast message={'Kayıt İşlemi Başarısız oldu'} />, { icon: false, hideProgressBar: true })
+      } else if (err === 401) {
+        dispatch(unAuthorized())
+      }
+    }
+
+  }
 
   const checkError = () => {
     if (errors.hasOwnProperty('contact') || errors.hasOwnProperty('name') || errors.hasOwnProperty('email') || errors.hasOwnProperty('companyName')) {
@@ -99,16 +112,17 @@ const AccountTabs = ({ userDetail }) => {
                   <div className='me-25'>
                     {imageUrl ?
                       <img className='rounded me-50 shadow' src={imageUrl} alt='İşletmeye ait logo ' height='100' width='100' />
-                      : <img className='rounded me-50 shadow' src={userDetail.userLogo} alt='İşletmeye ait logo ' height='100' width='100' />
+                      : <img className='rounded me-50 shadow img-fluid' src={userDetail.userLogo} alt='İşletmeye ait logo ' height='100' width='200' />
                     }
-                  </div>
-                  <div className='d-flex justify-content-between align-items-end mt-75 ms-1'>
-                    <div>
+                    <div className='mt-2'>
                       <Button tag={Label} className='mb-75 me-75' size='sm' color='primary'>
                         Yükle
                         <input className='form-control' type='file' hidden accept='image/*' onChange={setImage} />
                       </Button>
-                      <p className='mb-0'> JPG veya PNG türünde yükleme yapınız</p>
+                      <Button tag={Label} className='mb-75 me-75' size='sm' color='danger' onClick={() => removeLogo()}>
+                        Sil
+                      </Button>
+                      <p className='mb-0'> JPG veya PNG türünde yükleme yapınız. <br />Logo boyutu 180x30 olarak ayarlanmıştır</p>
                     </div>
                   </div>
                 </div>

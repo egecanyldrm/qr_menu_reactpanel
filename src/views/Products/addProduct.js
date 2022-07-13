@@ -157,43 +157,23 @@ const PillFilled = () => {
         }}>
           <CardBody>
             <Nav pills fill>
-              {state.package === 'deluxe' &&
-
-                <NavItem>
-                  <NavLink
-                    active={active === '1'}
-                    style={state.language === false ? { maxWidth: '25%' } : {}}
-                    onClick={() => {
-                      toggle('1')
-                    }}
-                  >
-                    Genel
-                  </NavLink>
-                </NavItem>
-              }
-
+              <NavItem>
+                <NavLink active={active === '1'} onClick={() => { toggle('1') }}>
+                  Genel
+                </NavLink>
+              </NavItem>
               {state.language === true &&
                 <NavItem>
-                  <NavLink
-                    active={active === '2'}
-                    onClick={() => {
-                      toggle('2')
-                    }}
-                  >
+                  <NavLink active={active === '2'} onClick={() => { toggle('2') }}>
                     Dil Bilgileri
                   </NavLink>
                 </NavItem>
               }
               <NavItem>
-                <NavLink
-                  active={active === '3'}
-                  onClick={() => {
-                    toggle('3')
-                  }}
-                >
-                  Varyasyon Bilgileri
-                </NavLink>
-              </NavItem>
+              <NavLink active={active === '3'} onClick={() => { toggle('3') }}>
+                Varyasyon Bilgileri
+              </NavLink>
+            </NavItem>
             </Nav>
             <TabContent className='py-50' activeTab={active}>
               <TabPane tabId='1'>

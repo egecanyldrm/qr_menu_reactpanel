@@ -6,9 +6,9 @@ import Select from 'react-select'
 import qs from 'qs';
 import { unAuthorized } from '../../redux/authentication';
 // ** Reactstrap Imports
-import { Trash } from 'react-feather'
+import { Trash, X } from 'react-feather'
 
-import { TabContent, TabPane, Nav, NavItem, NavLink, Card, CardBody, Form, Row, Col, Label, Spinner, Button, CardFooter, Table } from 'reactstrap'
+import { TabContent, TabPane, Nav, NavItem, NavLink, Card, CardBody, Form, Row, Col, Label, Spinner, Button, CardFooter, Table, ListGroupItem } from 'reactstrap'
 import FileUploaderRestrictions from '../../components/FileUploaderRestrictions'
 import Compressor from 'compressorjs';
 import axios from 'axios';
@@ -17,6 +17,11 @@ import { ErrorToast } from '../../extension/toast';
 import { useHistory, useParams } from "react-router-dom";
 
 import { useForm } from 'react-hook-form';
+
+import { deleteSwal } from '../../extension/basicalert';
+import Swal from 'sweetalert2'
+
+
 
 const PillFilled = () => {
   const { register, handleSubmit, formState: { errors } } = useForm();
@@ -43,6 +48,8 @@ const PillFilled = () => {
   const [compressedFile, setCompressedFile] = useState(null);
   const [imageStatus, setImageStatus] = useState(false);
 
+  const [productImage, setProductImage] = useState(false);
+
   const handleCompressedUpload = (file) => {
     const image = file;
     new Compressor(image, {
@@ -52,12 +59,31 @@ const PillFilled = () => {
       height: 1200,
       success: (compressedResult) => {
         // compressedResult has the compressed file.
-        // Use the compressed file to upload the images to your server.    
+        // Use the compressed file to upload the images to your server.
+        setProductImage(false)
         setCompressedFile(compressedResult)
       }
     });
   };
 
+
+  const deleteProductImage = (image) => {
+
+    deleteSwal({ title: 'Ürün Resimi' })
+      .then((result) => {
+        if (result.isConfirmed) {
+          axios.post('/admin/remove-product-image', { imageId: image, productId: params.productid })
+            .then(() => {
+              Swal.fire(
+                'Silindi!',
+                'Ürün Başarıyla Silindi.',
+                'success'
+              );
+              setProductImage(false)
+            }).catch(err => console.log(err))
+        }
+      })
+  }
   const removeVariant = (variantKey) => {
     setVariations(variations.filter(item => item.key !== variantKey))
   }
@@ -69,16 +95,14 @@ const PillFilled = () => {
   useEffect(async () => {
     try {
       const { data } = await axios.post('/admin/get-product', { productId: params.productid }).catch(err => { throw err.response.status });
-      setData(data)
+      setData(data);
       //Kategorilerin Yüklenmesi
       const selectCategories = data.categories.map(category => { return { label: category.tr.name, value: category._id } })
       setCategories(selectCategories)
       //Ürünün kategorisi
-
       if (data.product.variant) setVariations(data.product.variant)
-
+      if (data.product.imageUrl) setProductImage(true)
       if (data.productCategory) {
-
         let category = data.productCategory;
         const defaultRootCategory = { label: category.tr.name, value: category._id }
         setDefaultCategory(defaultRootCategory);
@@ -229,7 +253,22 @@ const PillFilled = () => {
                       </Col>
                     </Row>
                     {state.package === 'deluxe' &&
-                      <FileUploaderRestrictions clearImage={setCompressedFile} handleCompressedUpload={handleCompressedUpload} />
+                      <FileUploaderRestrictions logo={data.product.imageUrl} clearImage={setCompressedFile} handleCompressedUpload={handleCompressedUpload} />
+                    }
+                    {productImage &&
+
+                      <ListGroupItem className='d-flex align-items-center justify-content-between'>
+                        <div className='file-details d-flex align-items-center'>
+                          <img className='rounded' src={process.env.REACT_APP_IMAGE_URL + data.product.imageUrl} height='80' width='80' />
+                        </div>
+                        <Button color='danger' outline size='sm' className='btn-icon' onClick={() => {
+                          deleteProductImage(data.product.imageUrl)
+                        }
+                        }>
+
+                          <X size={14} />
+                        </Button>
+                      </ListGroupItem>
                     }
                   </TabPane>
                   <TabPane tabId='2'>
@@ -284,8 +323,6 @@ const PillFilled = () => {
                       </Col>
                     </Row>
                   </TabPane>
-
-
 
                   <TabPane tabId='3'>
                     <Row>
