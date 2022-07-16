@@ -112,6 +112,10 @@ const AddCustomer = () => {
                                 <Label className='form-label' > Adres</Label>
                                 <input className='form-control'  {...register("contact.address", { required: true })} />
                             </Col>
+                            <Col sm='6' className='mb-1'>
+                                <Label className='form-label' > Yıllık Ücret</Label>
+                                <input className='form-control'  {...register("yearlyPrice", { required: true })} />
+                            </Col>
                             <Col>
                                 <div className='me-25'>
                                     {

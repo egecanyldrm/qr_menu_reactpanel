@@ -113,6 +113,10 @@ const EditCustomer = () => {
                                     <Label className='form-label' > Adres</Label>
                                     <input className='form-control' defaultValue={customer.contact.address} {...register("contact.address", { required: true })} />
                                 </Col>
+                                <Col sm='6' className='mb-1'>
+                                    <Label className='form-label' > Yıllık Ücret</Label>
+                                    <input className='form-control' defaultValue={customer.yearlyPrice} {...register("yearlyPrice")} />
+                                </Col>
                                 <Col className='d-flex'>
                                     <div className='me-25'>
                                         {
