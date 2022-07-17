@@ -34,7 +34,7 @@ const PricingCards = (props) => {
               <div className='plan-price mt-2'>
                 <sup className='font-medium-1 fw-bold text-primary me-25'>TL</sup>
                 <span className='pricing-basic-value fw-bolder text-primary' style={{ fontSize: '3.5rem', lineHeight: .8 }}>
-                  750 TL
+                  1000 TL
                 </span>
                 <span className='pricing-duration text-body font-medium-1 h1 fw-bold ms-25'>/Yıllık</span>
               </div>
@@ -80,7 +80,7 @@ const PricingCards = (props) => {
               <div className='plan-price mt-2'>
                 <sup className='font-medium-1 fw-bold text-primary me-25'>TL</sup>
                 <span className={`pricing fw-bolder text-primary`} style={{ fontSize: '3.5rem', lineHeight: .8 }}>
-                  1000 TL
+                  2000 TL
                 </span>
                 <span className='pricing-duration text-body font-medium-1 fw-bold ms-25'>/Yıllık</span>
               </div>
