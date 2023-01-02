@@ -1,19 +1,14 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import axios from 'axios'
 import ls from 'localstorage-slim';
+import { ToastErrorTopCenter } from '../extension/toast';
 require('dotenv').config()
 
 
-export const checkLogin = createAsyncThunk(
-  'checkLogin',
-  async (token) => {
-    const response = await axios.post(process.env.REACT_APP_API_URL + '/islogin',
-      {
-        token: token
-      }
-    )
-    return response.data
-  }
+export const checkLogin = createAsyncThunk('checkLogin', async (token) => {
+  const response = await axios.post(process.env.REACT_APP_API_URL + '/islogin', { token: token })
+  return response.data
+}
 )
 
 const authSlice = createSlice({
@@ -44,11 +39,9 @@ const authSlice = createSlice({
     },
     unAuthorized(state, action) {
       state.isLogin = false
-      ls.remove('token');
-      ls.remove('user');
-      state.status = 'error'
+      localStorage.clear();
       state.message = 'Oturum Süreniz Dolmuştur'
-      state.title = 'Oops...'
+      ToastErrorTopCenter('Oturum Süreniz Dolmuştur');
     }
   },
   extraReducers: (builder) => {
@@ -62,10 +55,10 @@ const authSlice = createSlice({
       // Add user to the state array
       ls.remove('token');
       ls.remove('user');
-      state.isLogin = false,
-        state.status = 'error'
-      state.message = 'Oturum süreniz Dolmuştur'
-      state.title = 'Oops...'
+      state.isLogin = false;
+      state.status = 'error';
+      state.message = 'Oturum süreniz Dolmuştur';
+      state.title = 'Oops...';
 
     })
   }

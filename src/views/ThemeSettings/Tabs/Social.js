@@ -1,7 +1,7 @@
 // ** React Imports
 import { Fragment, useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
-import { ErrorToast } from '../../../extension/toast'
+import { ErrorToast, ToastError, ToastSuccess } from '../../../extension/toast'
 import { unAuthorized } from '../../../redux/authentication';
 import { useForm } from 'react-hook-form'
 import { useDispatch } from 'react-redux';
@@ -13,19 +13,15 @@ import { AlertCircle } from 'react-feather';
 const Social = ({ social }) => {
 
     const { register, handleSubmit, formState: { errors } } = useForm();
-    const dispatch = useDispatch();
 
 
     const onSubmit = async (data) => {
         try {
             await axios.post(`/admin/update-theme-settings/social`, data).catch(err => { throw err.response.status });
-            handleSuccess({ title: 'İşlem Başarılı', timer: 1200, message: 'Güncelleme başarılı bir şekilde yapıldı.' });
+            ToastSuccess('Güncelleme başarılı bir şekilde yapıldı')
         } catch (err) {
             if (err === 404) {
-                toast.error(<ErrorToast message={'Kayıt İşlemi Başarısız oldu'} />, { icon: false, hideProgressBar: true })
-
-            } else if (err === 401) {
-                dispatch(unAuthorized())
+                ToastError('Kayıt işlemi başarısız oldu')
             }
         }
 
@@ -42,24 +38,17 @@ const Social = ({ social }) => {
                         handleSubmit(onSubmit)(event).catch((error) => {
                         })
                     }} >
-
-
-                        <Row className='mb-1 w-25 '>
+                        <Row className='mb-1 w-50 '>
+                            
                             <Label className='form-label' >  İnstagram  </Label>
                             <div className='d-flex align-items-center'>
-                                <input className='form-control me-2' defaultValue={social.instagram}  {...register("instagram", { required: false })} />
-                                <a id='instagram'>
-                                    <AlertCircle />
-                                </a>
-                                <UncontrolledTooltip
-                                    placement='right' target='instagram'
-                                >
-                                    Bu alan boş bırakıldığında gözükmeyecektir.
-                                </UncontrolledTooltip>
+                                <input className='form-control me-1' defaultValue={social.instagram}  {...register("instagram", { required: false })} />
+                                <a id='instagram'><AlertCircle /></a>
+                                <UncontrolledTooltip placement='right' target='instagram'>Bu alan boş bırakıldığında gözükmeyecektir.</UncontrolledTooltip>
                             </div>
 
                         </Row>
-                        <Row className='mb-1 w-25 '>
+                        <Row className='mb-1 w-50 '>
                             <Label className='form-label' >  Facebook  </Label>
                             <div className='d-flex align-items-center'>
                                 <input className='form-control me-2' defaultValue={social.facebook} {...register("facebook", { required: false })} />
@@ -74,7 +63,7 @@ const Social = ({ social }) => {
                             </div>
 
                         </Row>
-                        <Row className='mb-1 w-25 '>
+                        <Row className='mb-1 w-50 '>
                             <Label className='form-label' >  Twitter  </Label>
                             <div className='d-flex align-items-center'>
                                 <input className='form-control me-2' defaultValue={social.twitter} {...register("twitter", { required: false })} />
@@ -89,7 +78,7 @@ const Social = ({ social }) => {
                             </div>
 
                         </Row>
-                        <Row className='mb-1 w-25 '>
+                        <Row className='mb-1 w-50 '>
                             <Label className='form-label' >  Youtube  </Label>
                             <div className='d-flex align-items-center'>
                                 <input className='form-control me-2' defaultValue={social.youtube} {...register("youtube", { required: false })} />

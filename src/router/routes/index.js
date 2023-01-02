@@ -17,6 +17,14 @@ const Routes = [
     component: lazy(() => import('../../views/Products/index'))
   },
   {
+    path: '/add-product',
+    component: lazy(() => import('../../views/Products/AddProduct'))
+  },
+  {
+    path: '/edit-product/:productid',
+    component: lazy(() => import('../../views/Products/editProduct'))
+  },
+  {
     path: '/categories',
     component: lazy(() => import('../../views/Categories/index'))
   },
@@ -29,20 +37,8 @@ const Routes = [
     component: lazy(() => import('../../views/Categories/editCategory'))
   },
   {
-    path: '/edit-product/:productid',
-    component: lazy(() => import('../../views/Products/editProduct'))
-  },
-  {
-    path: '/add-product',
-    component: lazy(() => import('../../views/Products/addProduct'))
-  },
-  {
     path: '/account-settings',
     component: lazy(() => import('../../views/AccountSettings/AccountSettings'))
-  },
-  {
-    path: '/theme-settings/design-settings',
-    component: lazy(() => import('../../views/ThemeSettings/settings'))
   },
   {
     path: '/theme-settings',

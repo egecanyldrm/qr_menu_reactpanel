@@ -39,7 +39,7 @@ const NavbarUser = props => {
         <Button color='primary'  className='me-4 menu-prewiew'  target='_blank' rel='noreferrer' href={process.env.REACT_APP_NEXT_FRONTEND + '/' + state}>
           Site Önizlemesi
         </Button>
-        <NotificationDropdown />
+        {/* <NotificationDropdown /> */}
         <UserDropdown />
       </ul>
     </Fragment>

@@ -1,224 +1,238 @@
-// ** React Imports
-import { Fragment, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
-import { toast } from 'react-toastify'
-import Select from 'react-select'
 import qs from 'qs';
 import { unAuthorized } from '../../redux/authentication';
-// ** Reactstrap Imports
-import { TabContent, TabPane, Nav, NavItem, Spinner, NavLink, Card, CardBody, Form, Row, Col, Label, Input, Button, CardFooter } from 'reactstrap'
+import { Card, CardBody, Spinner, Row, Col, Label, Input, Button, CardFooter, FormFeedback, Form } from 'reactstrap'
 import FileUploaderRestrictions from '../../components/FileUploaderRestrictions'
-import Compressor from 'compressorjs';
 import axios from 'axios';
-import { handleSuccess } from '../../extension/basicalert'
-import { ErrorToast } from '../../extension/toast';
+import { ToastError, ToastSuccess } from '../../extension/toast';
 import { useHistory, useParams } from "react-router-dom";
-import { useForm } from "react-hook-form";
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
 
-
-const PillFilled = () => {
+const AddCategory = () => {
   // ** States
-  const [active, setActive] = useState('1');
   const dispatch = useDispatch();
   const navigate = useHistory()
   const state = useSelector(state => state.auth.user);
   const params = useParams()
-  const [status, setstatus] = useState(true)
 
-  const [data, setData] = useState(null);
+  // ** States
+  const [image, setImage] = useState(null);
+  const [translate, setTranslate] = useState(false)
+  const [status, setStatus] = useState(false)
 
-  const [responseStatus, setResponseStatus] = useState();
-  const { register, handleSubmit, formState: { errors } } = useForm();
-
-
-
-  const [compressedFile, setCompressedFile] = useState(null);
-  const [imageStatus, setImageStatus] = useState(false);
-
-  const handleCompressedUpload = (file) => {
-    const image = file;
-    new Compressor(image, {
-      quality: 0.6, // 0.6 can also be used, but its not recommended to go below.,
-      resize: 'cover',
-      width: 1200,
-      height: 1200,
-      success: (compressedResult) => {
-        // compressedResult has the compressed file.
-        // Use the compressed file to upload the images to your server.    
-        setCompressedFile(compressedResult)
-      }
-    });
-  };
-
-
+  // ** Side Effects 
   useEffect(async () => {
     try {
-      setResponseStatus(false);
       const { data } = await axios.post('/admin/get-category', { categoryId: params.categoryid }).catch(err => { throw err.response.status });
-      setData(data)
-      setResponseStatus(true);
+      const { ar, en, tr, fr, ru, de } = data.category;
+      formik.setValues({
+        categoryName: tr.name,
+        arabian: ar.name,
+        english: en.name,
+        russian: ru.name,
+        germany: de.name,
+        french: fr.name
+      })
     } catch (error) {
-      if (error === 404) {
-        setStatus(false)
-      } else if (error === 401) {
-        dispatch(unAuthorized())
-      }
+      if (error === 401) dispatch(unAuthorized())
     }
   }, [])
 
-  useEffect(() => {
-    if (compressedFile) {
-      setImageStatus(true)
-    }
-  }, [compressedFile])
 
-  const toggle = tab => {
-    setActive(tab)
+
+
+  // ** Formik
+
+  const formik = useFormik({
+    initialValues: {
+      categoryName: '',
+      english: '',
+      russian: '',
+      germany: '',
+      french: '',
+      arabian: '',
+    },
+    validationSchema: Yup.object({
+      categoryName: Yup.string().required(' Bu alan zorunludur.'),
+    }),
+    onSubmit: values => handleSubmit(values),
+  });
+
+
+
+  // ** Handler Functions
+
+  const handleTranslate = async () => {
+    if (formik.values.categoryName.length < 1) return ToastError('Kategori ismi giriniz')
+    try {
+      setTranslate(true)
+      const res = await axios.post('/admin/category-translate', { categoryName: formik.values.categoryName }).catch(err => { throw err.response.status });
+      const { ar, en, tr, fr, ru, de } = res.data.category;
+      formik.setValues({
+        categoryName: tr.name,
+        arabian: ar.name,
+        english: en.name,
+        russian: ru.name,
+        germany: de.name,
+        french: fr.name
+      })
+      ToastSuccess('Çevir başarılı bir şekilde yapıldı.')
+      setTranslate(false)
+    } catch (err) {
+      if (err === 404) ToastError('Çeviri Başarısız!')
+    }
   }
 
+  const handleSubmit = async (values) => {
 
-  const submitForm = async (data) => {
-    if ((imageStatus) || (data.tr.name)) {
-      setstatus(false)
-      const formData = new FormData();
+    const data = {
+      tr: { name: values.categoryName },
+      en: { name: values.english },
+      ru: { name: values.russian },
+      ar: { name: values.arabian },
+      fr: { name: values.french },
+      de: { name: values.germany },
+    };
 
-      if (compressedFile) formData.append('image', compressedFile, compressedFile.name);
-      formData.set('category', qs.stringify(data));
+    if (!image) return ToastError('Lütfen Resim Yükleyiniz');
 
-      try {
-        await axios.post(`/admin/edit-category/${params.categoryid}`, formData).catch(err => { throw err.response.status })
-        setstatus(true)
+    setStatus(true)
+    const formData = new FormData();
+    formData.set('category', qs.stringify(data));
+    formData.append('image', image, image.name);
 
-        handleSuccess({ title: 'Kayıt Başarılı', timer: 1200, message: 'Kategori başarılı bir şekilde kayıt edildi.' });
-        setTimeout(() => {
-          navigate.push('/categories')
-        }, 1200)
-      } catch (err) {
-        if (err === 404) {
-          toast.error(<ErrorToast message={'Kayıt İşlemi Başarısız oldu'} />, { icon: false, hideProgressBar: true })
-          setstatus(true)
-        } else if (err === 401) {
-          dispatch(unAuthorized())
-        }
-      }
-    } else {
-      toast.error(<ErrorToast message={'Lütfen Zorunlu Alanları Doldurun : TR '} />, { icon: false, hideProgressBar: true })
+    try {
+      await axios.post(`/admin/edit-category/${params.categoryid}`, formData).catch(err => { throw err.response.status })
+      ToastSuccess('Kategori başarılı bir şekilde kayıt edildi.');
+      navigate.push('/categories')
+
+    } catch (err) {
+      if (err === 501) ToastError('Kayıt İşlemi Başarısız oldu');
+    } finally {
+      setStatus(false)
     }
+
   }
-  {
-    return (
-      <Fragment>
-        {responseStatus ?
-          <Card>
-            <form onSubmit={() => {
-              handleSubmit(submitForm)(event).catch((error) => {
+  return (
+    <Form onSubmit={formik.handleSubmit}>
+      <Card>
+        <CardBody>
+          <Row>
+            <Col md={6} xs={12} className='mb-1' >
+              <Label className='form-label' for='categoryName'> Kategori Adı </Label>
+              <Input
+                id="categoryName"
+                name="categoryName"
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                value={formik.values.categoryName}
+                invalid={formik.touched.categoryName && formik.errors.categoryName}
 
-              })
-            }}>
-              <CardBody>
-                <Nav pills fill>
-                  {
-                    state.package === 'deluxe' &&
-                    <NavItem>
-                      <NavLink
-                        active={active === '1'}
-                        style={state.language === false ? { maxWidth: '25%' } : {}}
+              />
+              {formik.touched.categoryName && formik.errors.categoryName ? <FormFeedback>{formik.errors.categoryName}</FormFeedback> : null}
+            </Col>
+            <Col md={6} xs={12} className='mb-1'>
+              <Label className='form-label' for='english'> İngilizce </Label>
+              <Input
+                id="english"
+                name="english"
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                value={formik.values.english}
+                invalid={formik.touched.english && formik.errors.english}
 
-                        onClick={() => {
-                          toggle('1')
-                        }}
-                      >
-                        Genel
-                      </NavLink>
+              />
+              {formik.touched.english && formik.errors.english ? <FormFeedback>{formik.errors.english}</FormFeedback> : null}
+            </Col>
+            <Col md={6} xs={12} className='mb-1'>
+              <Label className='form-label' for='russian'> Rusça </Label>
+              <Input
+                id="russian"
+                name="russian"
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                value={formik.values.russian}
+                invalid={formik.touched.russian && formik.errors.russian}
 
-                    </NavItem>
-                  }
-                  {
-                    state.language === true &&
-                    <NavItem>
-                      <NavLink
-                        active={active === '2'}
-                        onClick={() => {
-                          toggle('2')
-                        }}
-                      >
-                        Dil Bilgileri
-                      </NavLink>
-                    </NavItem>
-                  }
-                </Nav>
-                <TabContent className='py-50' activeTab={active}>
-                  <TabPane tabId='1'>
-                    <Row>
-                      <Col sm='12' className='mb-1'>
-                        <Label className='form-label' for='nameVertical'>Kategori Adı </Label>
-                        <input className='form-control' defaultValue={data.category.tr.name} placeholder='Kategori Adı' {...register("tr.name", { required: true })} />
-                      </Col>
+              />
+              {formik.touched.russian && formik.errors.russian ? <FormFeedback>{formik.errors.russian}</FormFeedback> : null}
+            </Col>
+            <Col md={6} xs={12} className='mb-1'>
+              <Label className='form-label' for='french'> Fransızca </Label>
+              <Input
+                id="french"
+                name="french"
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                value={formik.values.french}
+                invalid={formik.touched.french && formik.errors.french}
 
-                    </Row>
-                    <FileUploaderRestrictions clearImage={setCompressedFile} handleCompressedUpload={handleCompressedUpload} />
+              />
+              {formik.touched.french && formik.errors.french ? <FormFeedback>{formik.errors.french}</FormFeedback> : null}
+            </Col>
+            <Col md={6} xs={12} className='mb-1'>
+              <Label className='form-label' for='germany'> Almanca </Label>
+              <Input
+                id="germany"
+                name="germany"
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                value={formik.values.germany}
+                invalid={formik.touched.germany && formik.errors.germany}
 
-                  </TabPane>
-                  <TabPane tabId='2'>
-                    <Row>
-                      <Col sm='12' className='mb-1'>
-                        <Label className='form-label' for='nameVertical'>İngilizce </Label>
-                        <input className='form-control' defaultValue={data.category.en.name} placeholder='İngilizce' {...register("en.name")} />
-                      </Col>
+              />
+              {formik.touched.germany && formik.errors.germany ? <FormFeedback>{formik.errors.germany}</FormFeedback> : null}
+            </Col>
+            <Col md={6} xs={12} className='mb-1'>
+              <Label className='form-label' for='arabian'> Arapça </Label>
+              <Input
+                id="arabian"
+                name="arabian"
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                value={formik.values.arabian}
+                invalid={formik.touched.arabian && formik.errors.arabian}
 
-                    </Row>
-                    <Row>
-                      <Col sm='12' className='mb-1'>
-                        <Label className='form-label' for='nameVertical'>Rusça </Label>
-                        <input className='form-control' defaultValue={data.category.ru.name} placeholder='Rusça' {...register("ru.name")} />
-                      </Col>
-                    </Row>
-                    <Row>
-                      <Col sm='12' className='mb-1'>
-                        <Label className='form-label' for='nameVertical'>Fransızca </Label>
-                        <input className='form-control' defaultValue={data.category.fr.name} placeholder='Fransızca' {...register("fr.name")} />
-                      </Col>
-                    </Row>
-                    <Row>
-                      <Col sm='12' className='mb-1'>
-                        <Label className='form-label' for='nameVertical'>Arapça </Label>
-                        <input className='form-control' defaultValue={data.category.ar.name} placeholder='Arapça' {...register("ar.name")} />
-                      </Col>
-                    </Row>
-                    <Row>
-                      <Col sm='12' className='mb-1'>
-                        <Label className='form-label' for='nameVertical'>Almanca</Label>
-                        <input className='form-control' defaultValue={data.category.de.name} placeholder='Almanca' {...register("de.name")} />
-                      </Col>
-                    </Row>
-                  </TabPane>
-                </TabContent>
-              </CardBody>
-              <CardFooter>
-                <div className='d-flex'>
+              />
+              {formik.touched.arabian && formik.errors.arabian ? <FormFeedback>{formik.errors.arabian}</FormFeedback> : null}
+            </Col>
 
-                  {status ?
+            <FileUploaderRestrictions setImage={setImage} />
 
-                    <Button className='me-1' color='primary' type='submit' >
-                      Kaydet
-                    </Button>
-                    :
-                    <Button color='primary'>
+          </Row>
+        </CardBody>
+        <CardFooter>
+          <div className='d-flex'>
+            {status ?
+              <Button color='primary'>
+                <Spinner color='white' size='sm' />
+                <span className='ms-50'>Yükleniyor...</span>
+              </Button>
+              :
+              <Button type='submit' className='me-1' color='primary'>
+                Kaydet
+              </Button>
+            }
+            <div className='ms-2'>
+              <Button className='me-1' color='danger' onClick={handleTranslate}>
+                {
+                  translate ? (
+                    <>
                       <Spinner color='white' size='sm' />
-                      <span className='ms-50'>Yükleniyor...</span>
-                    </Button>
-                  }
-                </div>
-              </CardFooter>
-            </form>
-          </Card> :
-          <div></div>
-        }
-
-      </Fragment>
-    )
-  }
+                      <span className='ms-50'> Dil Çevirisi Yapılıyor...</span>
+                    </>
+                  )
+                    : 'Otomatik Dil Çevirme'
+                }
+              </Button>
+            </div>
+          </div>
+        </CardFooter>
+      </Card>
+    </Form>
+  )
 }
-export default PillFilled
-
+export default AddCategory
 

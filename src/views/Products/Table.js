@@ -18,14 +18,8 @@ const columns = [
     selector: row => row.title,
     sortable: true
   },
-  {
-    name: '',
-    selector: row => row.space
-  },
-  {
-    name: '',
-    selector: row => row.space
-  },
+  {},
+  {},
   {
     name: 'Düzenle',
     selector: row => row.action
@@ -33,7 +27,7 @@ const columns = [
   {
     name: 'Kaldır',
     selector: row => row.remove
-  }
+  },
 ];
 
 
@@ -47,7 +41,6 @@ const DataTablesBasic = (props) => {
 
     const products = props.data.map(product => {
       return {
-        id: product._id,
         title: product.tr.name,
         description: product.tr.description,
         action: <Link to={`/edit-product/${product._id}`}><Button.Ripple className='btn-icon' color='flat-success' ><Edit size={17} /></Button.Ripple></Link>,

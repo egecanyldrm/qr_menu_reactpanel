@@ -1,407 +1,371 @@
 // ** React Imports
-import { Fragment, useEffect, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux';
-import { toast } from 'react-toastify'
-import Select from 'react-select'
-import qs from 'qs';
+import { useEffect, useState } from 'react'
+import { useDispatch } from 'react-redux';
+import ReactSelect from 'react-select'
 import { unAuthorized } from '../../redux/authentication';
-// ** Reactstrap Imports
-import { Trash } from 'react-feather'
-import { TabContent, TabPane, Nav, NavItem, NavLink, Card, CardBody, Form, Row, Col, Label, Spinner, Button, CardFooter, Table } from 'reactstrap'
+import { Nav, NavItem, NavLink, Card, CardBody, Form, Row, Col, Label, Spinner, Button, CardHeader, Input, FormFeedback, CardTitle, TabPane, TabContent, UncontrolledTooltip } from 'reactstrap'
 import FileUploaderRestrictions from '../../components/FileUploaderRestrictions'
-import Compressor from 'compressorjs';
 import axios from 'axios';
-import { handleSuccess } from '../../extension/basicalert'
-import { ErrorToast } from '../../extension/toast';
+import { ToastError, ToastSuccess } from '../../extension/toast';
 import { useHistory } from "react-router-dom";
-import { useForm } from 'react-hook-form';
-const PillFilled = () => {
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
+import classNames from 'classnames';
+import VariationTable from './VariationTable';
+import qs from 'qs';
+
+const AddProduct = () => {
+  // ** States
+  const navigate = useHistory()
   // ** States
   const [active, setActive] = useState('1');
-  const dispatch = useDispatch();
-  const navigate = useHistory()
-  const { register, handleSubmit, formState: { errors } } = useForm();
-  const [translateStatus, setTranslateStatus] = useState(true)
-  const [translateData, setTranslateData] = useState(false);
+  const [variantKey, setVariantKey] = useState('');
+  const [variantValue, setVariantValue] = useState('');
+  const [image, setImage] = useState(null);
+  const [translate, setTranslate] = useState(false)
+  const [status, setStatus] = useState(false)
+  const [categories, setCategories] = useState([])
 
-  const [rootcategory, setRootCategory] = useState(null);
+  // ** Formik
+  const formik = useFormik({
+    initialValues: {
+      price: '',
+      rootCategory: null,
+      variant: [],
+      trName: '',
+      trDesc: '',
+      enName: '',
+      enDesc: '',
+      ruName: '',
+      ruDesc: '',
+      deName: '',
+      deDesc: '',
+      frName: '',
+      frDesc: '',
+      arName: '',
+      arDesc: '',
+    },
+    validationSchema: Yup.object({
+      trName: Yup.string().required(' Bu alan zorunludur.'),
+      price: Yup.string().required(' Bu alan zorunludur.'),
+      rootCategory: Yup.object().required(' Bu alan zorunludur.'),
+    }),
+    onSubmit: values => handleSubmit(values),
+  });
 
-  const [variations, setVariations] = useState([])
-
-  const state = useSelector(state => state.auth.user);
-  const [status, setstatus] = useState(true)
-
-  const [name, setName] = useState('')
-  const [value, setValue] = useState('')
-
-  const [compressedFile, setCompressedFile] = useState(null);
-  const [imageStatus, setImageStatus] = useState(false);
-  const [categories, setCategories] = useState([]);
-
-  const Translate = async (data) => {
-    try {
-      setTranslateStatus(false)
-      const res = await axios.post('/admin/product-translate', { productName: data.tr.name, productDescription: data.tr.description }).catch(err => { throw err.response.status });
-      setTranslateData(res.data)
-      handleSuccess({ title: 'Çeviri Başarılı', timer: 1000, message: 'Çevir başarılı bir şekilde yapıldı.' });
-      setTranslateStatus(true)
-    } catch (err) {
-      if (err === 404) {
-        toast.error(<ErrorToast message={'Çeviri Başarısız!'} />, { icon: false, hideProgressBar: true })
-        setTranslateStatus(true)
-
-      } else if (err === 401) {
-        dispatch(unAuthorized())
-      }
-    }
-  }
-  const handleCompressedUpload = (file) => {
-    const image = file;
-    new Compressor(image, {
-      quality: 0.6, // 0.6 can also be used, but its not recommended to go below.,
-      resize: 'cover',
-      width: 1200,
-      height: 1200,
-      success: (compressedResult) => {
-        setCompressedFile(compressedResult)
-      }
-    });
-  };
-
+  // ** Side Effects
   useEffect(async () => {
     try {
       const categories = await axios.get('/admin/categories').catch(err => { throw err.response.status });
-      const selectCategories = categories.data.map(category => { return { label: category.tr.name, value: category._id } })
-      setCategories(selectCategories);
+      setCategories(categories.data.map(category => ({ label: category.tr.name, value: category._id })))
     } catch (err) {
-      if (err === 404) {
-        toast.error(<ErrorToast message={'Bir Hata Oluştu !'} />, { icon: false, hideProgressBar: true })
-        navigate.push('/categories');
-      } else if (err === 401) {
-        dispatch(unAuthorized())
-      }
+      ToastError('Bir Hata Oluştu !')
     }
   }, [])
 
+  // ** Handler Functions 
+  const handleSubmit = async (values) => {
 
-  useEffect(() => {
-    if (compressedFile) {
-      setImageStatus(true)
+    if (translate) return ToastError('Dil çevirme işlemi devam ediyor ');
+    let data = {
+      categoryid: values.rootCategory.value,
+      price: values.price,
+      variant: values.variant,
+      tr: { name: values.trName, description: values.trDesc },
+      en: { name: values.enName, description: values.enDesc },
+      ru: { name: values.ruName, description: values.ruDesc },
+      ar: { name: values.arName, description: values.arDesc },
+      fr: { name: values.frName, description: values.frDesc },
+      de: { name: values.deName, description: values.deDesc },
     }
-  }, [compressedFile])
-
-  const toggle = tab => {
-    setActive(tab)
-  }
-
-
-  const onSubmit = async (data) => {
-    setstatus(false)
-    const formData = new FormData();
-
-    // Ürüne ait ana kategori var ise eklenir 
-    if (rootcategory) {
-      data.categoryid = rootcategory
-      if (translateData) {
-        translateData.categoryid = rootcategory
-      }
-    }
-    if (variations.length > 0) {
-      data.variant = variations
-    }
-    //Resim varsa form dataya eklenir
-    if (state.package === 'deluxe' && imageStatus && compressedFile) formData.append('image', compressedFile, compressedFile.name)
-
-    //Çeviri yapılıyorsa çeviri gönderilir
-    if (translateData) {
-      translateData.price = data.price;
-      if (variations.length > 0) translateData.variant = variations
-
-      formData.set('product', qs.stringify(translateData));
-    } else {
-      formData.set('product', qs.stringify(data));
-    }
+    const formdata = new FormData();
+    if (image) formdata.append('image', image, image.name);
+    formdata.set('product', qs.stringify(data));
 
     try {
-      await axios.post('/admin/add-product', formData).catch(err => { throw err.response.status })
-      setstatus(true)
-      handleSuccess({ title: 'Kayıt Başarılı', timer: 1200, message: 'Kategori başarılı bir şekilde kayıt edildi.' });
-      setTimeout(() => {
-        navigate.push('/products')
-      }, 1200)
+      setStatus(true)
+      await axios.post('/admin/add-product', formdata)
+      ToastSuccess('Ürün başarılı bir şekilde kaydedildi.')
+      navigate.push('/products')
     } catch (err) {
-      if (err === 501) {
-        toast.error(<ErrorToast message={'Kayıt İşlemi Başarısız oldu'} />, { icon: false, hideProgressBar: true })
-        setstatus(true)
-      } else if (err === 401) {
-        dispatch(unAuthorized())
-      }
+      ToastError('Kayıt işlemi başarısız oldu.')
+    } finally {
+      setStatus(false);
+    }
+
+  }
+
+
+
+  const handleAddVariant = () => {
+    if (variantKey.length < 1 || variantValue.length < 1) return ToastError('Varyasyon değerleri giriniz')
+    const arr = formik.values.variant;
+    formik.setFieldValue('variant', [...arr, { key: variantKey, value: variantValue }]);
+    setVariantKey('');
+    setVariantValue('');
+
+  }
+  const handleRemoveVariant = (key) => {
+    const arr = formik.values.variant.filter(variant => variant.key !== key)
+    formik.setFieldValue('variant', arr);
+  }
+
+  const handleTranslate = async () => {
+    if (formik.values.trName.length < 1) return ToastError('Ürün ismi giriniz')
+    try {
+      setTranslate(true)
+      const { data } = await axios.post('/admin/product-translate', { productName: formik.values.trName, productDescription: formik.values.trDesc })
+      const { ar, en, tr, fr, ru, de } = data;
+
+      formik.setFieldValue('trName', tr.name);
+      formik.setFieldValue('trDesc', tr.description);
+
+      formik.setFieldValue('enName', en.name);
+      formik.setFieldValue('enDesc', en.description);
+
+      formik.setFieldValue('frName', fr.name);
+      formik.setFieldValue('frDesc', fr.description);
+
+      formik.setFieldValue('ruName', ru.name);
+      formik.setFieldValue('ruDesc', ru.description);
+
+      formik.setFieldValue('deName', de.name);
+      formik.setFieldValue('deDesc', de.description);
+
+      formik.setFieldValue('arName', ar.name);
+      formik.setFieldValue('arDesc', ar.description);
+
+      ToastSuccess('Çevir başarılı bir şekilde yapıldı.')
+    } catch (err) {
+      ToastError('Çeviri Başarısız!')
+    } finally {
+      setTranslate(false);
     }
   }
 
 
-  const removeVariant = (variantKey) => {
-    setVariations(variations.filter(item => item.key !== variantKey))
-  }
-
-  const addVariation = () => {
-    variations.push({ key: name, value: value })
-  }
+  const toggle = tab => setActive(tab);
 
   return (
-    <Fragment>
+    <Form onSubmit={formik.handleSubmit}>
       <Card>
-        <form onSubmit={() => {
-          handleSubmit(onSubmit)(event).catch((error) => {
-          })
-        }}>
-          <CardBody>
-            <Nav pills fill>
+        <CardHeader className='row ' >
+          <Col xs={6}>
+            <Nav pills fill >
               <NavItem>
-                <NavLink active={active === '1'} onClick={() => { toggle('1') }}>
-                  Genel
-                </NavLink>
+                <NavLink active={active === '1'} onClick={() => { toggle('1') }}>Genel</NavLink>
               </NavItem>
-              {state.language === true &&
-                <NavItem>
-                  <NavLink active={active === '2'} onClick={() => { toggle('2') }}>
-                    Dil Bilgileri
-                  </NavLink>
-                </NavItem>
-              }
               <NavItem>
-              <NavLink active={active === '3'} onClick={() => { toggle('3') }}>
-                Varyasyon Bilgileri
-              </NavLink>
-            </NavItem>
+                <NavLink active={active === '2'} onClick={() => { toggle('2') }}>Dil Bilgileri</NavLink>
+              </NavItem>
+              <NavItem>
+                <NavLink active={active === '3'} onClick={() => { toggle('3') }}>Varyasyon Bilgileri</NavLink>
+              </NavItem>
             </Nav>
-            <TabContent className='py-50' activeTab={active}>
-              <TabPane tabId='1'>
-                <Row>
-                  <Col sm='12' className='mb-1'>
-                    <Label className='form-label'  > Ürün Adı</Label>
-                    <input className='form-control' placeholder='Ürün Adı' {...register("tr.name", { required: true })} />
-                  </Col>
-                  <Col sm='12' className='mb-1'>
-                    <Label className='form-label'  >Açıklama</Label>
-                    <input className='form-control' placeholder='Açıklama' {...register("tr.description", { required: false })} />
-                  </Col>
-                  <Col sm='12' className='mb-1'>
-                    <Label className='form-label'  >Fiyat</Label>
-                    <input className='form-control' placeholder='Fiyat' {...register("price", { required: true })} />
-                  </Col>
-                  <Col sm='12' className='mb-1'>
-                    <Label className='form-label'>Kategori</Label>
-                    <Select
-                      noOptionsMessage={({ inputValue: string }) => 'Ürün Bulunamadı...'}
-                      // theme={selectThemeColors}
-                      className='react-select'
-                      classNamePrefix='select'
-                      // defaultValue={categories[1]}
-                      name='clear'
-                      options={categories}
-                      isClearable
-                      singleValue
-                      placeholder='Kategori Seç'
-                      onChange={(e) => {
-                        if (e) {
-                          setRootCategory(e.value)
-                        } else {
-                          setRootCategory(null)
-                        }
-                      }}
-                    />
-                  </Col>
-                </Row>
-                {state.package === 'deluxe' &&
-                  <FileUploaderRestrictions clearImage={setCompressedFile} handleCompressedUpload={handleCompressedUpload} />
-                }
-              </TabPane>
-              <TabPane tabId='2'>
-                <Row>
-                  <Col sm='12' className='mb-1'>
-                    <Label className='form-label' > İngilizce Ürün Adı</Label>
-                    {
-                      translateData ?
-                        <input className='form-control' placeholder='İngilizce Ürün Adı' defaultValue={translateData.en.name}  {...register("en.name")} />
-                        : <input className='form-control' placeholder='İngilizce Ürün Adı'  {...register("en.name")} />
-                    }
-                  </Col>
-                  <Col sm='12' className='mb-1'>
-                    <Label className='form-label' >İngilizce Açıklama</Label>
-                    {
-                      translateData ?
-                        <input className='form-control' placeholder='İngilizce  Adı' defaultValue={translateData.en.description}  {...register("en.description")} />
-                        : <input className='form-control' placeholder='İngilizce  Adı' {...register("en.description")} />
-                    }
-                  </Col>
-                </Row>
-                <Row className='mt-2'>
-                  <Col sm='12' className='mb-1'>
-                    <Label className='form-label' > Rusça Ürün Adı</Label>
-                    {
-                      translateData ?
-                        <input className='form-control' placeholder='Rusça Ürün Adı' defaultValue={translateData.ru.name}  {...register("ru.name")} />
-                        : <input className='form-control' placeholder='Rusça Ürün Adı' {...register("ru.name")} />
-                    }                  </Col>
-                  <Col sm='12' className='mb-1'>
-                    <Label className='form-label'  > Rusça Açıklama</Label>
-                    {
-                      translateData ?
-                        <input className='form-control' placeholder='Rusça  Açıklama' defaultValue={translateData.ru.description}  {...register("ru.description")} />
-                        : <input className='form-control' placeholder='Rusça  Açıklama'  {...register("ru.description")} />
-                    }
-                  </Col>
-                </Row>
-                <Row className='mt-2'>
-                  <Col sm='12' className='mb-1'>
-                    <Label className='form-label' > Fransızca Ürün Adı</Label>
-                    {
-                      translateData ?
-                        <input className='form-control' placeholder='Fransızca Ürün Adı' defaultValue={translateData.fr.name}  {...register("fr.name")} />
-                        : <input className='form-control' placeholder='Fransızca Ürün Adı' {...register("fr.name")} />
-                    }
-                  </Col>
-                  <Col sm='12' className='mb-1'>
-                    <Label className='form-label' >Fransızca Açıklama</Label>
-                    {
-                      translateData ?
-                        <input className='form-control' placeholder='Fransızca  Açıklama' defaultValue={translateData.fr.description}  {...register("fr.description")} />
-                        : <input className='form-control' placeholder='Fransızca  Açıklama'  {...register("fr.description")} />
-                    }
-                  </Col>
-                </Row>
-                <Row className='mt-2'>
-                  <Col sm='12' className='mb-1'>
-                    <Label className='form-label' > Arapça Ürün Adı</Label>
-                    {
-                      translateData ?
-                        <input className='form-control' placeholder='Arapça Ürün Adı' defaultValue={translateData.ar.name}  {...register("ar.name")} />
-                        : <input className='form-control' placeholder='Arapça Ürün Adı'  {...register("ar.name")} />
-                    }
-                  </Col>
-                  <Col sm='12' className='mb-1'>
-                    <Label className='form-label' > Arapça Açıklama</Label>
-                    {
-                      translateData ?
-                        <input className='form-control' placeholder='Arapça Açıklama' defaultValue={translateData.ar.description}  {...register("ar.description")} />
-                        : <input className='form-control' placeholder='Arapça Açıklama'  {...register("ar.description")} />
-                    }
-                  </Col>
-                </Row>
-                <Row className='mt-2'>
-                  <Col sm='12' className='mb-1'>
-                    <Label className='form-label' > Almanca Ürün Adı</Label>
-                    {
-                      translateData ?
-                        <input className='form-control' placeholder='Almanca Ürün Adı' defaultValue={translateData.de.name}  {...register("de.name")} />
-                        : <input className='form-control' placeholder='Almanca Ürün Adı' {...register("de.name")} />
-                    }
-                  </Col>
-                  <Col sm='12' className='mb-1'>
-                    <Label className='form-label' > Almanca Açıklama</Label>
-                    {
-                      translateData ?
-                        <input className='form-control' placeholder='Almanca Açıklama' defaultValue={translateData.de.description}  {...register("de.description")} />
-                        : <input className='form-control' placeholder='Almanca Açıklama' {...register("de.description")} />
-                    }
-                  </Col>
-                </Row>
-              </TabPane>
-              <TabPane tabId='3'>
-                <Row>
-                  <Col lg='4' md='4' sm='4' className='mb-1'>
-                    <Label className='form-label' > Varyant Adı</Label>
-                    <input className='form-control' placeholder='Varyant  Adı' value={name} onChange={e => setName(e.target.value)} />
-                  </Col>
-                  <Col lg='4' md='4' sm='4' className='mb-1'>
-                    <Label className='form-label' >Varyant Değeri </Label>
-                    <input className='form-control' placeholder='Varyant  Değeri' value={value} onChange={e => setValue(e.target.value)} />
-                  </Col>
-                  <Col lg='4' md='4' sm='4'>
-                    <Button color='success' className='mt-2' onClick={() => {
-                      addVariation();
-                      setName('')
-                      setValue('')
-                    }}>
-                      Varyant Ekle
-                    </Button>
-                  </Col>
-                </Row>
-                <Row className='px-1 mt-2'>
-                  <Table
-                    hover
-                    striped
-                  >
-                    <thead>
-                      <tr>
-                        <th>
-                          Varyant Adı
-                        </th>
-                        <th>
-                          Varyant Değeri
-                        </th>
-                        <th>
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {variations.map((variation, key) => {
-                        return (
-                          <tr key={key}>
-                            <th scope="row">
-                              {variation.key}
-                            </th>
-                            <td>
-                              {variation.value}
-                            </td>
+          </Col>
+          <Col xs={6} className='d-flex justify-content-end'>
+            <Button color='success' type='submit'>
+              {status ? <><Spinner color='white' size='sm' /><span className='ms-50'>Yükleniyor...</span></> : 'Kaydet'}
+            </Button>
 
-                            <td>
-                              <Button.Ripple onClick={() => {
-                                removeVariant(variation.key, variation.value)
-                              }} className='btn-icon' color='flat-danger' ><Trash size={17} /></Button.Ripple>
-                            </td>
-                          </tr>
-                        )
-                      })}
-                    </tbody>
-                  </Table>
-                </Row>
-              </TabPane>
-            </TabContent>
-          </CardBody>
-          <CardFooter>
-            <div className='d-flex'>
-              {status ?
+            <Button className='mx-1' color='danger' onClick={handleTranslate} disabled={formik?.values?.trName?.length > 1 ? false : true}>
+              {translate ? (<><Spinner color='white' size='sm' /><span className='ms-50'> Dil Çevirisi Yapılıyor...</span></>) : 'Otomatik Dil Çevirme'}
+            </Button>
+            {/* // TODO : Tooltip eklenecek ve variations düzeltilecek */}
+            {/* <UncontrolledTooltip placement='top'>
+              Bu özellliğin kullanılması için ürün adı giriniz
+            </UncontrolledTooltip> */}
+          </Col>
+        </CardHeader>
+        <CardBody>
+          <TabContent className='py-50' activeTab={active}>
 
-                <Button type='submit' className='me-1' color='primary'>
-                  Kaydet
-                </Button>
-                :
-                <Button color='primary'>
-                  <Spinner color='white' size='sm' />
-                  <span className='ms-50'>Yükleniyor...</span>
-                </Button>
-              }
-              <div className='ms-2'>
-                {
-                  state.language === true && translateStatus ?
-                    <Button onClick={() => handleSubmit(Translate)(event).catch((error) => { })
-                    } className='me-1' color='danger'>
-                      Otomatik Dil Çevirme
-                    </Button>
-                    :
-                    <Button color='danger'>
-                      <Spinner color='white' size='sm' />
-                      <span className='ms-50'> Dil Çevirisi Yapılıyor...</span>
-                    </Button>
-                }
-              </div>
-            </div>
-          </CardFooter>
-        </form>
+            <TabPane tabId='1'>
+              <CardTitle>Ürün bilgileri</CardTitle>
+              <Row>
+                <Col md={6} xs={12} className='mb-1' >
+                  <Label className='form-label' for='trName'> Ürün Adı  <span className='text-danger'> *</span></Label>
+                  <Input
+                    id="trName"
+                    name="trName"
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    value={formik.values.trName}
+                    invalid={formik.touched.trName && formik.errors.trName}
+                  />
+                  {formik.touched.trName && formik.errors.trName ? <FormFeedback>{formik.errors.trName}</FormFeedback> : null}
+                </Col>
+                <Col md={6} xs={12} className='mb-1' >
+                  <Label className='form-label' for='trDesc'> Ürün Açıklaması </Label>
+                  <Input
+                    id="trDesc"
+                    name="trDesc"
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    value={formik.values.trDesc}
+                    invalid={formik.touched.trDesc && formik.errors.trDesc}
+
+                  />
+                  {formik.touched.trDesc && formik.errors.trDesc ? <FormFeedback>{formik.errors.trDesc}</FormFeedback> : null}
+                </Col>
+                <Col md={6} xs={12} className='mb-1' >
+                  <Label className='form-label' for='price'> Fiyat <span className='text-danger'> *</span> </Label>
+                  <Input
+                    id="price"
+                    name="price"
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    value={formik.values.price}
+                    invalid={formik.touched.price && formik.errors.price}
+
+                  />
+                  {formik.touched.price && formik.errors.price ? <FormFeedback>{formik.errors.price}</FormFeedback> : null}
+                </Col>
+                <Col md={6} xs={12} className='mb-1' >
+                  <Label className='form-label' for='rootCategory'> Kategori  <span className='text-danger'> *</span> </Label>
+                  <ReactSelect
+                    id="rootCategory"
+                    name="rootCategory"
+                    options={categories}
+                    onChange={(e) => formik.setFieldValue('rootCategory', e)}
+                    onBlur={formik.handleBlur}
+                    value={formik.values.rootCategory}
+                    invalid={formik.touched.rootCategory && formik.errors.rootCategory}
+                    className={classNames({ 'border border-danger rounded': formik.touched.rootCategory && formik.errors.rootCategory })}
+                  />
+                  {formik.touched.rootCategory && formik.errors.rootCategory ? <span className='text-danger'>Bu alan zorunludur</span> : null}
+                </Col>
+                <Col xs={12} >
+                  <FileUploaderRestrictions setImage={setImage} />
+                </Col>
+              </Row>
+            </TabPane>
+            <TabPane tabId='2'>
+              <CardTitle className='my-2'>Dil bilgileri </CardTitle>
+              <Row>
+                <Col md={6} xs={12} className='mb-1' >
+                  <Label className='form-label' for='enName'> İngilizce Adı </Label>
+                  <Input
+                    id="enName"
+                    name="enName"
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    value={formik.values.enName}
+                    invalid={formik.touched.enName && formik.errors.enName}
+
+                  />
+                </Col>
+                <Col md={6} xs={12} className='mb-1' >
+                  <Label className='form-label' for='enDesc'> İngilizce Açıklama </Label>
+                  <Input
+                    id="enDesc"
+                    name="enDesc"
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    value={formik.values.enDesc}
+                    invalid={formik.touched.enDesc && formik.errors.enDesc}
+                  />
+                </Col>
+                <Col md={6} xs={12} className='mb-1' >
+                  <Label className='form-label' for='ruName'> Rusça Adı </Label>
+                  <Input
+                    id="ruName"
+                    name="ruName"
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    value={formik.values.ruName}
+                    invalid={formik.touched.ruName && formik.errors.ruName}
+
+                  />
+                </Col>
+                <Col md={6} xs={12} className='mb-1' >
+                  <Label className='form-label' for='ruDesc'> Rusça Açıklama </Label>
+                  <Input
+                    id="ruDesc"
+                    name="ruDesc"
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    value={formik.values.ruDesc}
+                    invalid={formik.touched.ruDesc && formik.errors.ruDesc}
+                  />
+                </Col>
+                <Col md={6} xs={12} className='mb-1' >
+                  <Label className='form-label' for='frName'> Fransızca Adı </Label>
+                  <Input
+                    id="frName"
+                    name="frName"
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    value={formik.values.frName}
+                    invalid={formik.touched.frName && formik.errors.frName}
+
+                  />
+                </Col>
+                <Col md={6} xs={12} className='mb-1' >
+                  <Label className='form-label' for='frDesc'> Fransızca Açıklama </Label>
+                  <Input
+                    id="frDesc"
+                    name="frDesc"
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    value={formik.values.frDesc}
+                    invalid={formik.touched.frDesc && formik.errors.frDesc}
+                  />
+                </Col>
+                <Col md={6} xs={12} className='mb-1' >
+                  <Label className='form-label' for='arName'> Arapça Adı </Label>
+                  <Input
+                    id="arName"
+                    name="arName"
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    value={formik.values.arName}
+                    invalid={formik.touched.arName && formik.errors.arName}
+
+                  />
+                </Col>
+                <Col md={6} xs={12} className='mb-1' >
+                  <Label className='form-label' for='arDesc'> Arapça Açıklama </Label>
+                  <Input
+                    id="arDesc"
+                    name="arDesc"
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    value={formik.values.arDesc}
+                    invalid={formik.touched.arDesc && formik.errors.arDesc}
+                  />
+                </Col>
+              </Row>
+
+            </TabPane>
+
+            <TabPane tabId='3'>
+              <Row>
+                <CardTitle className='my-2'>Varyasyon Bilgileri</CardTitle>
+                <Col xs={12} className=' row  align-items-center'>
+                  <Col xs={4}>
+                    <Label > Varyant Adı</Label>
+                    <Input value={variantKey} onChange={e => setVariantKey(e.target.value)} />
+                  </Col>
+                  <Col xs={4} className='row'>
+                    <Label > Varyant Değeri</Label>
+                    <Input value={variantValue} onChange={e => setVariantValue(e.target.value)} />
+                  </Col>
+                  <Col xs={4} className='h-100  d-flex align-items-end justify-content-start'>
+                    <Button color="success" size="md" type='button' onClick={handleAddVariant}> Ekle </Button>
+                  </Col>
+                </Col>
+              </Row>
+
+              <Col xs={12} className='mt-1'>
+                <VariationTable variations={formik.values.variant} handleRemoveVariant={handleRemoveVariant} />
+              </Col>
+            </TabPane>
+          </TabContent>
+
+        </CardBody>
       </Card>
-    </Fragment>
+    </Form >
   )
 }
-export default PillFilled
+export default AddProduct

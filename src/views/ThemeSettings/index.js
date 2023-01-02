@@ -1,106 +1,26 @@
-import React, { useEffect, useState } from 'react'
-import { Card, Row, Col, CardImg, Spinner, Modal, ModalBody, ModalHeader, CardText, Button, Badge, CardTitle, CardBody, ButtonGroup, CardFooter, UncontrolledTooltip } from 'reactstrap'
-import { useDispatch, useSelector } from 'react-redux';
-import { toast } from 'react-toastify'
-
+import React, { useState, useEffect } from 'react'
+import { Card, Label, CardTitle, CardBody, Input, Row, Col, TabContent, TabPane, Spinner } from 'reactstrap'
+import Tabs from './Tabs'
+import Social from './Tabs/Social'
+import Color from './Tabs/Color'
+import General from './Tabs/General'
+import { useDispatch } from 'react-redux'
 import { unAuthorized } from '../../redux/authentication'
-import axios from 'axios';
-import { handleSuccess } from '../../extension/basicalert'
-import { ErrorToast } from '../../extension/toast';
-import PricingCards from '../AccountSettings/PricingCards';
-import { askSwal } from '../../extension/basicalert';
-
-import { Link } from 'react-router-dom';
-
-const themes = [
-    {
-        name: 'athena',
-        description: [
-            " İşletme Logosu Kullanılır ",
-            " Ürünler resimsiz listelenir "
-        ],
-        package: ['special']
-    },
-    {
-        name: 'troy',
-        description: [
-            " İşletme adı logo olarak kullanılır. ",
-            " Ürünler resimsiz listelenir "
-        ],
-        package: ['deluxe']
-    }
-    ,
-    {
-        name: 'atlas',
-        description: [
-            'Aşağıya doğru açılır akordiyon tasarımlı tema',
-            " İşletme adı logo olarak kullanılır. ",
-            "Ürünler resim ile listelenir"
-        ],
-        package: ['deluxe']
-    },
-    {
-        name: 'orion',
-        description: [
-            " İşletme adı logo olarak kullanılır. ",
-            " Ürünler resimli listelenir "
-        ],
-        package: ['deluxe']
-    }
+import { toast } from 'react-toastify'
+import { ErrorToast } from '../../extension/toast'
+import axios from 'axios'
 
 
-];
-
-const getTheme = (themeName, user) => {
-    const theme = themes.find(theme => theme.name === themeName);
-    return (
-        <Row>
-            <Col lg='6' md='6'>
-                <Card  >
-                    <CardBody>
-                        <CardTitle className='text-capitalize' tag='h4'>   {theme.name}</CardTitle>
-                        <CardText tag='div'>
-                            <ul>
-                                {theme.description.map((item, key) => (
-                                    <li key={key} dangerouslySetInnerHTML={{ __html: item }} ></li>
-                                ))}
-                            </ul>
-                        </CardText>
-                        <div className="d-grid gap-2">
-                            <Link to='/theme-settings/design-settings' className='btn btn-primary  mt-3 mb-2'>
-                                Temayı Düzenle
-                            </Link>
-                        </div>
-                        <Button color='primary' block outline target='_blank' rel='noreferrer' href={process.env.REACT_APP_NEXT_FRONTEND + '/' + user.username}>
-                            Önizle
-                        </Button>
-                    </CardBody>
-
-                </Card>
-            </Col>
-            <Col lg='6' md='6' className='shadow' >
-                <Card  >
-                    <iframe src={process.env.REACT_APP_NEXT_FRONTEND + '/' + user.username} style={{ height: '24rem' }} frameBorder="0"></iframe>
-                </Card>
-            </Col>
-        </Row>
-    )
-
-}
-
-
-const index = () => {
+const settings = () => {
+    const [activeTab, setActiveTab] = useState('1')
     const [data, setData] = useState(null)
-    const [show, setShow] = useState(false)
+    const dispatch = useDispatch()
 
-    const dispatch = useDispatch();
-    const reduxUserPackage = useSelector(state => state.auth.user.package)
-    const user = useSelector(state => state.auth.user)
     useEffect(async () => {
 
         try {
-            const { data } = await axios.get('/admin/get-theme').catch(err => { throw err.response.status });
-            setData(data.theme)
+            const { data } = await axios.get('/admin/theme-settings').catch(err => { throw err.response.status });
+            setData(data)
         } catch (err) {
             if (err === 404) {
                 toast.error(<ErrorToast message={'Bir Hata Oluştu !'} />, { icon: false, hideProgressBar: true })
@@ -110,104 +30,36 @@ const index = () => {
         }
     }, [])
 
-    const onClick = async (theme) => {
-        try {
-            await axios.post('/admin/change-theme', { theme: theme }).catch(err => { throw err.response.status })
-            handleSuccess({ title: 'Kayıt Başarılı', timer: 1200, message: 'Tema başarılı bir şekilde değiştirildi.' });
-            setData({ theme: theme })
-            window.scrollTo({
-                top: 0,
-                behavior: 'smooth'
-            })
-        } catch (err) {
-            if (err === 501) {
-                toast.error(<ErrorToast message={'İşlem Başarısız oldu.'} />, { icon: false, hideProgressBar: true })
-            } else if (err === 401) {
-                dispatch(unAuthorized())
-            }
-        }
-    }
 
-
-    const askPackageUpdate = () => {
-        askSwal()
-            .then((result) => {
-                if (result.isConfirmed) {
-                    setShow(true)
-                }
-            }).catch(err => console.log(err))
-    }
+    const toggleTab = tab => setActiveTab(tab)
     return (
         <section>
             {
                 data ?
-                    <Card>
-                        <CardBody>
-                            <CardTitle tag='h4'>Aktif Tema</CardTitle>
-                            {getTheme(data.theme, user)}
-                        </CardBody>
-                    </Card>
+                    <Row>
+
+                        <Col xs={12}>
+                            <Tabs className='mb-2' activeTab={activeTab} toggleTab={toggleTab} />
+
+                            <TabContent activeTab={activeTab}>
+                                <TabPane tabId='1'>
+                                    <General {...data.themeSettings} />
+                                </TabPane>
+                                <TabPane tabId='2'>
+                                    <Social {...data.themeSettings} />
+                                </TabPane>
+                            </TabContent>
+                        </Col>
+                    </Row>
+
                     :
                     <Spinner>
-                        Yükleniyor...
+                        Yükleniyor
                     </Spinner>
-
             }
-
-            <h2 className='my-3'>Temalar</h2>
-            <Row>
-                {themes.map((theme, key) => (
-                    <Col lg='4' sm='12' key={key}>
-                        <Card className='me-2 flex-nowrap' style={{ height: '20rem' }} >
-                            {theme.package.includes('deluxe') &&
-                                <Badge color='success' className='badge-glow mb-1 position-absolute' style={{ right: 0 }}>
-                                    Premium Konsept Tema
-                                </Badge>
-                            }
-
-                            <CardBody>
-                                <CardTitle className='text-capitalize' tag='h4'>{theme.name}</CardTitle>
-
-                                <CardText tag='ul'>
-                                    {theme.description.map((item, key) => (
-                                        <li key={key} dangerouslySetInnerHTML={{ __html: item }} ></li>
-                                    ))}
-                                </CardText>
-
-                            </CardBody>
-                            <CardFooter>
-                                <ButtonGroup className='w-100'>
-                                    {theme.package.includes(reduxUserPackage) || reduxUserPackage === 'deluxe' ?
-                                        <Button className='w-50' color='primary' onClick={() => { onClick(theme.name) }} >
-                                            Aktif Et
-                                        </Button>
-                                        :
-                                        <React.Fragment>
-                                            <Button color='gradient-secondary' id='UnControlledExample' onClick={askPackageUpdate} >
-                                                Aktif Et
-                                            </Button>
-                                            <UncontrolledTooltip placement='top' target='UnControlledExample'>
-                                                Bu Temayı Etkinleştirmek İçin Delux Pakete Sahip Olmalısınız
-                                            </UncontrolledTooltip>
-                                        </React.Fragment>
-
-                                    }
-                                </ButtonGroup>
-                            </CardFooter>
-                        </Card>
-                    </Col>
-                ))}
-            </Row>
-            <Modal isOpen={show} toggle={() => setShow(!show)} className='modal-dialog-centered modal-xl'>
-                <ModalHeader className='bg-transparent' toggle={() => setShow(!show)}></ModalHeader>
-                <ModalBody className='px-sm-5 mx-50 pb-5'>
-                    <h1 className='text-center mb-1'>Lisans Ve Paketler</h1>
-
-                    <PricingCards userName={user.name} package={user.package} />
-                </ModalBody>
-            </Modal>
         </section>
     )
 }
 
-export default index
+export default settings
+

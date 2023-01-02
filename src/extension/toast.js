@@ -1,23 +1,33 @@
 // ** React Imports
-import { Fragment } from 'react'
+import { toast } from 'react-toastify'
 
-import Avatar from '@components/avatar'
-import { X, DownloadCloud } from 'react-feather'
+export const ToastSuccess = (message) => {
+    return toast.success(message, {
+        autoClose: 3000,
+        hideProgressBar: true,
+        position: 'top-right'
+    })
+}
 
-// ** Reactstrap Imports
+export const ToastError = (message) => {
+    return toast.error(message, {
+        autoClose: 3000,
+        hideProgressBar: true,
+        position: 'top-right'
+    })
+}
+export const ToastErrorTopCenter = (message) => {
+    return toast.error(message, {
+        autoClose: 3000,
+        hideProgressBar: true,
+        position: 'top-center'
+    })
+}
 
-export const ErrorToast = ({ message }) => (
-    <Fragment>
-        <div className='toastify-header'>
-            <div className='title-wrapper'>
-                <Avatar size='sm' color='danger' icon={<X size={12} />} />
-                <h6 className='toast-title'>Hata!</h6>
-            </div>
-        </div>
-        <div className='toastify-body'>
-            <span role='img' aria-label='toast-text'>
-                👋 {message}
-            </span>
-        </div>
-    </Fragment>
-)
+export const ErrorToast = ({ message }) => {
+    return toast.error(message, {
+        autoClose: 3000,
+        hideProgressBar: true,
+        position: 'top-right'
+    })
+}

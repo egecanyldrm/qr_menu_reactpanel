@@ -8,45 +8,35 @@ import { deleteSwal } from '../../extension/basicalert';
 import Table from './Table'
 import { useState } from 'react'
 import axios from 'axios'
-import { useDispatch } from 'react-redux'
-import { unAuthorized } from '../../redux/authentication'
+import { ToastError, ToastSuccess } from '../../extension/toast';
 
 const Permissions = () => {
 
   const [products, setProducts] = useState([]);
-  const dispatch = useDispatch();
 
   useEffect(async () => {
-    try {
-      const products = await axios.get('/admin/products').catch(err => { throw err.response.status });
-      setProducts(products.data);
-    } catch (err) {
-      if (err === 404) {
-        console.log(err)
-      } else if (err === 401) {
-        dispatch(unAuthorized())
-      }
-    }
+    handleGetProducts()
   }, [])
 
   const removeProduct = (id) => {
-
     deleteSwal({ title: 'Ürün' })
       .then((result) => {
         if (result.isConfirmed) {
-
           axios.post('/admin/delete-product', { productId: id })
             .then(() => {
-              const newProducts = products.filter(product => product._id !== id);
-              setProducts(newProducts)
-              Swal.fire(
-                'Silindi!',
-                'Ürün Başarıyla Silindi.',
-                'success'
-              )
+              handleGetProducts()
+              ToastSuccess('Ürün başarıyla silindi.')
             }).catch(err => console.log(err))
         }
       })
+  }
+  const handleGetProducts = async () => {
+    try {
+      const products = await axios.get('/admin/products')
+      setProducts(products.data);
+    } catch (err) {
+      ToastError('Ürünler bulunamadı')
+    }
   }
 
   return (

@@ -9,7 +9,7 @@ import { Menu } from 'react-feather'
 
 // ** Reactstrap Imports
 import { NavItem, NavLink } from 'reactstrap'
-import NotificationDropdown from './NotificationDropdown'
+
 
 const ThemeNavbar = props => {
   // ** Props
