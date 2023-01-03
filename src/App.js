@@ -46,7 +46,7 @@ const App = () => {
         let access_token = localStorage.getItem('token')
         axios.defaults.headers.common['Authorization'] = `Bearer ${access_token}`
     }, [state.auth.isLogin])
-    console.log(state.auth.isLogin)
+
 
     return <Router />
 
