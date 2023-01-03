@@ -5,7 +5,6 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useEffect } from 'react'
 import { checkLogin, unAuthorized } from './redux/authentication'
 import axios from 'axios'
-import { handleBasicTitleAlert } from './extension/basicalert'
 import './index.scss'
 require('dotenv').config()
 //Local Storage package config
@@ -15,9 +14,11 @@ ls.config.encrypt = true;
 
 const App = () => {
     const dispatch = useDispatch();
+    const state = useSelector(state => state)
     useEffect(() => {
 
-        let token = ls.get('token')
+        // let token = ls.get('token')
+        let token = localStorage.getItem('token')
         if (token) dispatch(checkLogin(token))
 
         //Axios Config
@@ -36,11 +37,16 @@ const App = () => {
     }, [])
 
     useEffect(() => {
-        let access_token = ls.get('token')
+        // let access_token = ls.get('token')
+        let access_token = localStorage.getItem('token')
         axios.defaults.headers.common['Authorization'] = `Bearer ${access_token}`
     })
-
-
+    useEffect(() => {
+        // let access_token = ls.get('token')
+        let access_token = localStorage.getItem('token')
+        axios.defaults.headers.common['Authorization'] = `Bearer ${access_token}`
+    }, [state.auth.isLogin])
+    console.log(state.auth.isLogin)
 
     return <Router />
 

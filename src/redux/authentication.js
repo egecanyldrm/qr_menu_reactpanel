@@ -14,24 +14,20 @@ export const checkLogin = createAsyncThunk('checkLogin', async (token) => {
 const authSlice = createSlice({
   name: 'auth',
   initialState: {
-    isLogin: null,
+    isLogin: false,
     message: ''
   },
   reducers: {
     logIn(state, action) {
-      ls.set('user', JSON.stringify(action.payload.user));
-      ls.set('token', action.payload.token);
+      localStorage.setItem('user', JSON.stringify(action.payload.user))
+      localStorage.setItem('token', action.payload.token)
       state.isLogin = true;
       state.user = action.payload.user;
-      // console.log(JSON.parse(localStorage.getItem('user')))
     },
     logOut(state, action) {
       state.isLogin = false
-      state.status = 'success'
-      state.title = ''
-      ls.remove('token');
-      ls.remove('user');
-      state.message = 'Oturumunuz Başarıyla Sonlanmıştır'
+      localStorage.clear()
+      ToastErrorTopCenter('Oturumunuz Başarıyla Sonlanmıştır');
     },
     userNotFound(state, action) {
       state.message = 'Aradığınız Kullanıcı Bulunamadı'
@@ -49,17 +45,15 @@ const authSlice = createSlice({
     builder.addCase(checkLogin.pending, (state) => {
       // Add user to the state array
       state.isLogin = true
-      state.user = JSON.parse(ls.get('user'))
+      state.user = JSON.parse(localStorage.getItem('user'))
     });
     builder.addCase(checkLogin.rejected, (state) => {
       // Add user to the state array
-      ls.remove('token');
-      ls.remove('user');
+      localStorage.clear()
       state.isLogin = false;
       state.status = 'error';
       state.message = 'Oturum süreniz Dolmuştur';
       state.title = 'Oops...';
-
     })
   }
 }

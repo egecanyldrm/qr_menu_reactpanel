@@ -289,8 +289,6 @@ const Router = () => {
               <Redirect push to="/home" />
               {ResolveOwnerRoutes()}
             </Fragment>
-
-
         }
         <Route path='*' component={Error} />
       </Switch>
